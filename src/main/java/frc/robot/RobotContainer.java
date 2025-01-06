@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.subsystems.Base;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,8 +24,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private final Base base = new Base();
 
-
+  private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(base);
   // Game Controllers
   public static Joystick logitech;
   public static Joystick compStreamDeck;
@@ -62,6 +65,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    base.setDefaultCommand(driveWithJoysticks);
     logitech = new Joystick(KLogitechPort); // Logitech Dual Action
     xbox = new XboxController(KXboxPort); // Xbox 360 for Windows
     compStreamDeck = new Joystick(KCompStreamDeckPort); // Stream Deck + vjoy

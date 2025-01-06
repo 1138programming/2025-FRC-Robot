@@ -24,8 +24,8 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class SwerveModule extends SubsystemBase {
-  public SwerveModule() {}
+public class CTRESwerve extends SubsystemBase {
+  public CTRESwerve() {}
     
     // The steer motor uses any SwerveModule.SteerRequestType control request with the
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput

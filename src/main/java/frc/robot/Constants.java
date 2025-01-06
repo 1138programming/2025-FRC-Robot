@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+
 // import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 // import com.pathplanner.lib.util.PIDConstants;
 // import com.pathplanner.lib.util.ReplanningConfig;
@@ -174,16 +176,16 @@ public final class Constants {
     // public static final double KBackRightOffset = -34.45;
 
     // Drive Motor Reversals
-    public static final boolean KFrontLeftDriveReversed = false;
-    public static final boolean KFrontRightDriveReversed = false;
-    public static final boolean KBackLeftDriveReversed = false;
-    public static final boolean KBackRightDriveReversed = false;
+    public static final InvertedValue KFrontLeftDriveReversed = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue KFrontRightDriveReversed = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue KBackLeftDriveReversed = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue KBackRightDriveReversed = InvertedValue.Clockwise_Positive;
 
     // Angle Motor Reversals
-    public static final boolean KFrontLeftAngleReversed = true;
-    public static final boolean KFrontRightAngleReversed = true;
-    public static final boolean KBackLeftAngleReversed = true;
-    public static final boolean KBackRightAngleReversed = true;
+    public static final InvertedValue KFrontLeftAngleReversed = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue KFrontRightAngleReversed = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue KBackLeftAngleReversed = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue KBackRightAngleReversed = InvertedValue.CounterClockwise_Positive;
 
     // Swerve CanCoder Reversals
     public static final boolean KFrontLeftDriveEncoderReversed = false;

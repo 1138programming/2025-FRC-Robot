@@ -1,12 +1,12 @@
 package frc.robot.subsystems;
 
+import frc.robot.subsystems.SwerveModule.*;
 import static frc.robot.Constants.LimelightConstants.KSpeakerCoordinatesBlue;
 import static frc.robot.Constants.LimelightConstants.KSpeakerCoordinatesRed;
 import static frc.robot.Constants.SwerveDriveConstants.*;
 
-import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
-
+import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -49,6 +49,7 @@ public class Base extends SubsystemBase {
     // poseEstimate = new PoseEstimator<>(kinematics, odometry,
     // poseEstimate = new SwerveDrivePoseEstimator
 
+
     leftFrontModule = new SwerveModule(
         KLeftFrontAngleID,
         KLeftFrontDriveID,
@@ -78,7 +79,7 @@ public class Base extends SubsystemBase {
         KBackRightDriveReversed,
         KBackRightAngleReversed);
 
-    gyro = new AHRS(SPI.Port.kMXP);
+    gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
     gyro.reset();
 
     kinematics = new SwerveDriveKinematics(
@@ -91,25 +92,25 @@ public class Base extends SubsystemBase {
     driveSpeedFactor = KBaseDriveMidPercent;
     rotSpeedFactor = KBaseRotMidPercent;
 
-    AutoBuilder.configureHolonomic(
-        this::getPose,
-        this::resetPose,
-        this::getSpeeds,
-        this::driveRobotRelative,
-        KPathFollowerConfig,
-        () -> {
-          // Boolean supplier that controls when the path will be mirrored for the red
-          // alliance
-          // This will flip the path being followed to the red side of the field.
-          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    // AutoBuilder.configureHolonomic(
+    //     this::getPose,
+    //     this::resetPose,
+    //     this::getSpeeds,
+    //     this::driveRobotRelative,
+    //     KPathFollowerConfig,
+    //     () -> {
+    //       // Boolean supplier that controls when the path will be mirrored for the red
+    //       // alliance
+    //       // This will flip the path being followed to the red side of the field.
+    //       // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-          var alliance = DriverStation.getAlliance();
-          if (alliance.isPresent()) {
-            return alliance.get() == DriverStation.Alliance.Red;
-          }
-          return false;
-        },
-        this);
+    //       var alliance = DriverStation.getAlliance();
+    //       if (alliance.isPresent()) {
+    //         return alliance.get() == DriverStation.Alliance.Red;
+    //       }
+    //       return false;
+    //     },
+    //     this);
 
     SmartDashboard.putNumber("RotP", KRotationP);
     SmartDashboard.putNumber("RotI", KRotationI);

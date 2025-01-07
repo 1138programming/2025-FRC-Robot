@@ -139,15 +139,16 @@ public final class Constants {
     public static final double KNeoMaxRPM = 5676;
     public static final double KNeoVortexMaxRPM = 6784;
     public static final int KVortexEncoderTicksPerRevolution = 7168;
+    public static final double KKrakenX60MaxRPM = 6000;
 
     // Robot Specs
-    public static final double KDriveMotorGearRatio = 1 / 5.51; // Double Check
+    public static final double KDriveMotorToWheelGearRatio = 1 / 5.36; 
     public static final double KWheelDiameterMeters = 0.1016;
-    public static final double KDriveMotorRotToMeter = KDriveMotorGearRatio * KWheelDiameterMeters * Math.PI;
+    public static final double KDriveMotorRotToMeter = KDriveMotorToWheelGearRatio * KWheelDiameterMeters * Math.PI;
     public static final double KDriveMotorRPMToMetersPerSec = KDriveMotorRotToMeter / 60;
     public static final double KPhysicalMaxDriveSpeedMPS = KNeoVortexMaxRPM * KDriveMotorRPMToMetersPerSec;
-    public static final double KWheelRadialDistanceFromCenter = 0.377;
-    public static final double KWheelDistanceFromCenter = 0.267;
+    public static final double KWheelRadialDistanceFromCenter = 0.4953;
+    public static final double KWheelDistanceFromCenter = 0.34925;
 
     // Swerve Wheel X and Y Coordinates for Driving
     public static final Translation2d KFrontLeftLocation = new Translation2d(
@@ -166,10 +167,10 @@ public final class Constants {
 
     // Offsets
     //  Meow (Gray Bot)
-    public static final double KFrontLeftOffset = -106.3;
-    public static final double KFrontRightOffset = -106.35;
-    public static final double KBackLeftOffset = 99.89;
-    public static final double KBackRightOffset = -35.6;
+    public static final double KFrontLeftOffset = 0;
+    public static final double KFrontRightOffset = 0;
+    public static final double KBackLeftOffset = 0;
+    public static final double KBackRightOffset = 0;
     // public static final double KFrontLeftOffset = -104.326171875;
     // public static final double KFrontRightOffset = -101.69;
     // public static final double KBackLeftOffset = 101.34;

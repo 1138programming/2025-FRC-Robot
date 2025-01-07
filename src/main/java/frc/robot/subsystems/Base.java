@@ -1,11 +1,9 @@
 package frc.robot.subsystems;
 
-import frc.robot.subsystems.SwerveModule.*;
 import static frc.robot.Constants.LimelightConstants.KSpeakerCoordinatesBlue;
 import static frc.robot.Constants.LimelightConstants.KSpeakerCoordinatesRed;
 import static frc.robot.Constants.SwerveDriveConstants.*;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -17,7 +15,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -92,26 +89,6 @@ public class Base extends SubsystemBase {
     driveSpeedFactor = KBaseDriveMidPercent;
     rotSpeedFactor = KBaseRotMidPercent;
 
-    // AutoBuilder.configureHolonomic(
-    //     this::getPose,
-    //     this::resetPose,
-    //     this::getSpeeds,
-    //     this::driveRobotRelative,
-    //     KPathFollowerConfig,
-    //     () -> {
-    //       // Boolean supplier that controls when the path will be mirrored for the red
-    //       // alliance
-    //       // This will flip the path being followed to the red side of the field.
-    //       // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-    //       var alliance = DriverStation.getAlliance();
-    //       if (alliance.isPresent()) {
-    //         return alliance.get() == DriverStation.Alliance.Red;
-    //       }
-    //       return false;
-    //     },
-    //     this);
-
     SmartDashboard.putNumber("RotP", KRotationP);
     SmartDashboard.putNumber("RotI", KRotationI);
     SmartDashboard.putNumber("RotD", KRotationD);
@@ -119,9 +96,9 @@ public class Base extends SubsystemBase {
 
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, double maxDriveSpeedMPS,
       double maxRotSpeed) {
-    xSpeed *= maxDriveSpeedMPS * getDriveSpeedFactor();
-    ySpeed *= maxDriveSpeedMPS * getDriveSpeedFactor();
-    rot *= KMaxAngularSpeed * getRotSpeedFactor();
+    xSpeed *= maxDriveSpeedMPS * 0.5;
+    ySpeed *= maxDriveSpeedMPS * 0.5;
+    rot *= KMaxAngularSpeed * 0.5;
 
     // feeding parameter speeds into toSwerveModuleStates to get an array of
     // SwerveModuleState objects

@@ -274,4 +274,15 @@ public final class Constants {
         public static final PIDController KBaseController = new PIDController(KlimeLightDriveP, KlimeLightDriveI,
                 KlimeLightDriveD);
     }
+
+
+    //Lift Constants
+    public static final int KSpinMotorID = 1;
+
+    public static final int KLimitSwitchTop = 2;
+    public static final int KLimitSwitchBottom = -2;
+
+    public static final double KSpinMotor = 50;
+    //Nothing tested
+
 }

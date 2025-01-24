@@ -283,6 +283,8 @@ public final class Constants {
     public static final int KLimitSwitchBottom = -2;
 
     public static final double KSpinMotor = 50;
+
+    public static final int KLiftCANCoderID = 2;
     //Nothing tested
 
 }

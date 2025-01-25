@@ -47,6 +47,8 @@ public class Lift extends SubsystemBase {
         // canCoderConfig.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
         canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
         spinLiftCANCoder.getConfigurator().apply(canCoderConfig);
+        //Weird 90, 180, -90, 0 rotation to help motor get to set point quicker!
+
 
         // Motor
         liftMotor = new TalonFX(KSpinMotorID);
@@ -55,7 +57,9 @@ public class Lift extends SubsystemBase {
         liftMotorConfig.Feedback.FeedbackRemoteSensorID = spinLiftCANCoder.getDeviceID();
         liftMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         liftMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
+        //Sensor to mech ratio, sensor on mech so just 1:1!
         liftMotorConfig.Feedback.RotorToSensorRatio = 46.67;
+        //Motor to sensor ratio!
         
         liftMotor.getConfigurator().apply(liftMotorConfig);
 

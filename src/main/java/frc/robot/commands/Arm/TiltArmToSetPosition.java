@@ -24,7 +24,7 @@ public class TiltArmToSetPosition extends Command {
 
     @Override
     public void execute() {
-        arm.tiltArmToSetPosition(position);
+        arm.tiltArmToSetPositionWPI(position);
     }
 
     @Override

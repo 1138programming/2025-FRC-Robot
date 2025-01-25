@@ -30,6 +30,7 @@ public class Telemetry {
      */
     public Telemetry(double maxSpeed) {
         MaxSpeed = maxSpeed;
+        SignalLogger.setPath("/logs");
         SignalLogger.start();
     }
 
@@ -120,5 +121,8 @@ public class Telemetry {
 
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
+    }
+    public void endTelemetry() {
+        SignalLogger.stop();
     }
 }

@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,20 +20,17 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.EndTelemetry;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import static frc.robot.Constants.TunerConstants.*;
 import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.generated.TunerSwerve.*;
 
 public class RobotContainer {
+
     private double MaxSpeed = kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
-                                                                                      // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -69,8 +67,10 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = createDrivetrain();
     public final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain);
+    public final EndTelemetry endTelemetry;
 
     public RobotContainer() {
+        endTelemetry = new EndTelemetry(logger);
         logitech = new Joystick(KLogitechPort); // Logitech Dual Action
         compStreamDeck = new Joystick(KCompStreamDeckPort); // Stream Deck + vjoy
         testStreamDeck = new Joystick(KTestingStreamDeckPort); // Stream Deck + vjoy
@@ -154,6 +154,7 @@ public class RobotContainer {
         logitechBtnBack.and(logitechBtnX).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         logitechBtnStart.and(logitechBtnY).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         logitechBtnStart.and(logitechBtnX).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        logitechBtnB.onTrue(endTelemetry);
 
         // reset the field-centric heading on left bumper press
         logitechBtnX.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));

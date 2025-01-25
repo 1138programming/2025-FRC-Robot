@@ -26,7 +26,8 @@ public class TiltArmManually extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        arm.stop();
+        arm.stop(); 
+        //might need to be changed
     }
 
     //figure out controller for ending command

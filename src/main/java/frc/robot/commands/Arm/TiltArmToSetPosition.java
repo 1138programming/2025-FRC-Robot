@@ -1,7 +1,5 @@
 package frc.robot.commands.Arm;
 
-import static frc.robot.Constants.ArmConstants.*;
-
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.subsystems.Arm;
@@ -27,16 +25,16 @@ public class TiltArmToSetPosition extends Command {
         arm.tiltArmToSetPositionWPI(position);
     }
 
-    @Override
-    public boolean isFinished() {
-        return arm.isAtSetPosition();
-    }
-
+    
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
             arm.stop();
         }
+    }
+    @Override
+    public boolean isFinished() {
+        return arm.isAtSetPosition();
     }
 
 

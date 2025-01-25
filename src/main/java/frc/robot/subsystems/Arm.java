@@ -2,28 +2,21 @@ package frc.robot.subsystems;
 
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 
-import edu.wpi.first.wpilibj2.command.Command;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.Constants.ArmConstants.*;
-import frc.robot.Constants.ArmConstants.ArmPositionConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.DigitalInput; //limit switch
 
@@ -57,7 +50,6 @@ public class Arm extends SubsystemBase {
 
     private DutyCycleEncoder tiltThroughBoreEncoder;
 
-    private DigitalInput limitSwitch; //Not to be used for now
     private DigitalInput hallSensorTop;
     private DigitalInput hallSensorBottom;
     
@@ -65,8 +57,11 @@ public class Arm extends SubsystemBase {
 
         tiltMotor = new TalonFX(KTiltArmId);
         tiltThroughBoreEncoder = new DutyCycleEncoder(KTiltThroughEncoderId, KTiltThroughEncoderFullRotationValue, KTiltThroughEncoderZeroPosition);
+
         //WPI Pid
             armPid = new PIDController(KArmControlP, KArmControlI, KArmControlD);
+            m_PositionDutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+
         //CTRE pid
             Slot0Configs = new Slot0Configs();
             //config.Slot0.kS = ArmConstants.KArmControlS; } for later use if wish to add values to overcome static friction
@@ -76,7 +71,6 @@ public class Arm extends SubsystemBase {
             Slot0Configs.kD = KArmControlD;   
 
             m_PositionVoltage = new PositionVoltage(0).withEnableFOC(true);
-            m_PositionDutyCycle = new DutyCycleOut(0).withEnableFOC(true);
             m_TrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(KMaxVoltage, KMaxAcceleration));
             //set first goal to stored position of arm, will change later upon use input
 
@@ -91,9 +85,7 @@ public class Arm extends SubsystemBase {
 
         tiltMotor.setNeutralMode(NeutralModeValue.Brake); //set the motor to brake mode so arm is precise
 
-        //Set up ThroughBore encoder
 
-        //limitSwitch = new DigitalInput(ArmConstants.KArmLimitSwitch);
         hallSensorTop = new DigitalInput(KHallSensorTopId);
         hallSensorBottom = new DigitalInput(KHallSensorBottomId);  
     }

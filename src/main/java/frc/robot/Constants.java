@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.*;
+import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.signals.*;
 import com.ctre.phoenix6.swerve.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -18,8 +19,10 @@ import edu.wpi.first.units.measure.*;
 /*IDs taken
  * Motors: 1, 2, 3, 4, 5, 6, 7, 8, 9 
  * Encoders: 1, 2, 3, 4
+ * Digital Inputs: 0, 1
  * Pidgeon:
  */
+
 public final class Constants {
     public static class TunerConstants {
         // Both sets of gains need to be tuned to your individual robot.
@@ -282,7 +285,41 @@ public final class Constants {
     }
 
     public static class ArmConstants {
+
         public static final int KTiltArmId = 9;
+
         public static final int KTiltThroughEncoderId = 4;
+        public static final int KTiltThroughEncoderFullRotationValue = 360; //Troughbore
+        public static final int KTiltThroughEncoderZeroPosition = 0; //Throughbore -> check complete offset in future
+        public static final int KTiltThroughEncoderOffset = 0; //TODO: test offset
+
+        public static final int KHallSensorTopId = 0; //TODO: check if digital input id is available
+        public static final int KHallSensorBottomId = 1;
+
+        public static final int KArmLimitSwitch = 0;
+
+        public static final double KArmControlP = 0.0;
+        public static final double KArmControlI = 0.0;
+        public static final double KArmControlD = 0.0;
+        public static final int KMaxVoltage = 12; // in rps
+        public static final int KMaxAcceleration = 60; //in rps/s
+
+        public static final double KArmDeadZone = 1.0; //in degrees
+
+        public static class ArmPositionConstants {
+
+                //all aplceholder measured from degrese assuming bot is right next to lowest level of reef 
+                //and arm starts halfway up the base of the reef
+                public static final int KArmPositionReefL4 = 60; 
+                public static final int KArmPositionReefL3 = 50; 
+                public static final int KArmPositionReefL2 = 40;
+                public static final int KArmPositionReefL1 = 0; //could be between range 0-10
+
+                public static final int KArmPositionStore = 90; //assuming store means not used
+                
+                public static final int KArmPositionIntakeGround = 340;
+                public static final int KArmPositionIntakeCoralStation = 55; //sloped tunnel is 55°
+
+        }
     }
 }

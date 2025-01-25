@@ -1,13 +1,11 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Rotations;
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.LiftConstants.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -56,10 +54,10 @@ public class Lift extends SubsystemBase {
         liftMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         liftMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
         liftMotorConfig.Feedback.RotorToSensorRatio = 46.67;
-        
+
         liftMotor.getConfigurator().apply(liftMotorConfig);
 
-        //pid config
+        // pid config
         var slot0Configs = new Slot0Configs();
         slot0Configs.kP = 0; // An error of 1 rotation results in 2.4 V output
         slot0Configs.kI = 0; // no output for integrated error
@@ -72,7 +70,6 @@ public class Lift extends SubsystemBase {
         startingAngle = 0;
     }
 
-    
     public void setMotorSpeed(double speed) {
         if (speed > 0) {
             if (toplimitSwitch.get()) {
@@ -88,17 +85,17 @@ public class Lift extends SubsystemBase {
             }
         }
     }
-    
+
     // PID
     public void SetLiftToPos(double setpoint) {
-        //In rotations (degrees/360)
+        // In rotations (degrees/360)
         liftMotor.setControl(m_request.withPosition(setpoint));
     }
-    
+
     public double getLiftCANCoder() {
         double angle = spinLiftCANCoder.getPosition().getValueAsDouble() * 360 + startingAngle;
         return angle;
-        
+
     }
 
     // Limit Switches

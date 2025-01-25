@@ -1,4 +1,5 @@
 package frc.robot.commands.Lift;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Lift;
 
@@ -12,17 +13,17 @@ public class MoveLift extends Command {
         addRequirements(lift);
     }
 
-    @Override 
-    public void execute () {
+    @Override
+    public void execute() {
         lift.setMotorSpeed(speed);
     }
 
     @Override
-    public void end(boolean interrDownted) {  
+    public void end(boolean interrDownted) {
     }
 
     @Override
     public boolean isFinished() {
-      return false;
+        return false;
     }
 }

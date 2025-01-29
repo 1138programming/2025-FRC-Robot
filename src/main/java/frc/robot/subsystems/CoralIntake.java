@@ -16,7 +16,7 @@ import static frc.robot.Constants.CoralIntakeConstants.*;
 public class CoralIntake extends SubsystemBase {
   public DigitalInput CoralIntakeLimitSwitch;
   private SparkMax CoralIntakeMotor;
-  
+
   public CoralIntake() {
     CoralIntakeMotor = new SparkMax(KCoralIntakeMotorId, MotorType.kBrushless);
     CoralIntakeLimitSwitch = new DigitalInput(KCoralIntakeMotorLimitSwitchPort);
@@ -24,9 +24,9 @@ public class CoralIntake extends SubsystemBase {
 
   public void setCoralIntakeSpeed(double speed){
     if(CoralIntakeLimitSwitch.get() && speed > 0){
-      CoralIntakeMotor.set(speed);
-    } else {
       CoralIntakeMotor.set(0);
+    } else {
+      CoralIntakeMotor.set(speed);
     }
   }
 

@@ -275,5 +275,9 @@ public final class Constants {
                 KlimeLightDriveD);
     }
 
+    public static class CoralIntakeConstants{
+        public static final int KCoralIntakeMotorId = 0;
+        public static final int KCoralIntakeMotorLimitSwitchPort = 0;
+    }
     
 }

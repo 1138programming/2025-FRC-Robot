@@ -4,11 +4,30 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import static frc.robot.Constants.CoralIntakeConstants.*;
 
 public class CoralIntake extends SubsystemBase {
-  /** Creates a new CoralIntake. */
-  public CoralIntake() {}
+  public DigitalInput CoralIntakeLimitSwitch;
+  private SparkMax CoralIntakeMotor;
+  public CoralIntake() {
+    CoralIntakeMotor = new SparkMax(KCoralIntakeMotorId, MotorType.kBrushless);
+    CoralIntakeLimitSwitch = new DigitalInput(KCoralIntakeMotorLimitSwitchPort);
+  }
+
+  public void setCoralIntakeSpeed(double speed){
+    if(CoralIntakeLimitSwitch.get() && speed > 0){
+      CoralIntakeMotor.set(speed);
+    } else {
+      CoralIntakeMotor.set(0);
+    }
+  }
 
   @Override
   public void periodic() {

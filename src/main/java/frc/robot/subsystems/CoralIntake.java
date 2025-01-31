@@ -22,8 +22,12 @@ public class CoralIntake extends SubsystemBase {
     CoralIntakeLimitSwitch = new DigitalInput(KCoralIntakeMotorLimitSwitchPort);
   }
 
+  public boolean getObjectPossesion(){
+    return CoralIntakeLimitSwitch.get();
+  }
+
   public void setCoralIntakeSpeed(double speed){
-    if(CoralIntakeLimitSwitch.get() && speed > 0){
+    if(getObjectPossesion() && speed > 0){
       CoralIntakeMotor.set(0);
     } else {
       CoralIntakeMotor.set(speed);

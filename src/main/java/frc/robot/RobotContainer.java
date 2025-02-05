@@ -6,18 +6,16 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Base.DriveWithJoysticks;
 import frc.robot.commands.Telemetry.EndTelemetry;
@@ -27,12 +25,17 @@ import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.generated.TunerSwerve.*;
 
 public class RobotContainer {
-
+    
+    public final CommandSwerveDrivetrain drivetrain;
+    public final DriveWithJoysticks driveWithJoysticks;
+    public final EndTelemetry endTelemetry;
+    private final SendableChooser<Command> autoChooser;
+    
     private double MaxSpeed = kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
     public static Joystick logitech;
@@ -42,10 +45,6 @@ public class RobotContainer {
     // public final CommandXboxController joystick = new CommandXboxController(1);
     public JoystickButton logitechBtnX, logitechBtnA, logitechBtnB, logitechBtnY, logitechBtnLB, logitechBtnRB,
             logitechBtnLT, logitechBtnRT, logitechBtnBack, logitechBtnStart; // Logitech Button
-
-    public JoystickButton xboxBtnA, xboxBtnB, xboxBtnX, xboxBtnY, xboxBtnLB, xboxBtnRB, xboxBtnStrt, xboxBtnSelect;
-
-    public Trigger xboxBtnRT, xboxBtsnLT;
 
     public JoystickButton compStreamDeck1, compStreamDeck2, compStreamDeck3, compStreamDeck4, compStreamDeck5,
             compStreamDeck6, compStreamDeck7, compStreamDeck8, compStreamDeck9, compStreamDeck10, compStreamDeck11,
@@ -65,12 +64,17 @@ public class RobotContainer {
             autonTestStreamDeck14,
             autonTestStreamDeck15;
 
-    public final CommandSwerveDrivetrain drivetrain = createDrivetrain();
-    public final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain);
-    public final EndTelemetry endTelemetry;
 
     public RobotContainer() {
+
+        drivetrain = createDrivetrain();
+        driveWithJoysticks = new DriveWithJoysticks(drivetrain);
         endTelemetry = new EndTelemetry(logger);
+        
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
         logitech = new Joystick(KLogitechPort); // Logitech Dual Action
         compStreamDeck = new Joystick(KCompStreamDeckPort); // Stream Deck + vjoy
         testStreamDeck = new Joystick(KTestingStreamDeckPort); // Stream Deck + vjoy
@@ -141,29 +145,35 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> Kdrive.withVelocityX(-getLogiLeftYAxis() * KMaxSpeed)
-                .withVelocityY(-getLogiLeftXAxis() * KMaxSpeed)
-                .withRotationalRate(getLogiRightXAxis() * KMaxAngularRate)));
+        .withVelocityY(-getLogiLeftXAxis() * KMaxSpeed)
+        .withRotationalRate(getLogiRightXAxis() * KMaxAngularRate)));
+                 
+
 
         logitechBtnA.whileTrue(drivetrain.applyRequest(() -> brake));
-        logitechBtnB.whileTrue(drivetrain.applyRequest(
-                () -> point.withModuleDirection(new Rotation2d(-getLogiLeftYAxis(), -getLogiLeftXAxis()))));
+        // logitechBtnB.whileTrue(drivetrain.applyRequest(
+        // () -> point.withModuleDirection(new Rotation2d(-getLogiLeftYAxis(),
+        // -getLogiLeftXAxis()))));
 
-        // Run SysId routines when holding back/start and X/Y.
+        // Run SysId routines when holding back/st^art and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        logitechBtnBack.and(logitechBtnY).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        logitechBtnBack.and(logitechBtnX).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        logitechBtnStart.and(logitechBtnY).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        logitechBtnStart.and(logitechBtnX).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        logitechBtnB.onTrue(endTelemetry);
+        // Run in desending order (Hold for alteast 5 seconds)
+        testStreamDeck1.whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        testStreamDeck2.whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        testStreamDeck3.whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        testStreamDeck4.whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        testStreamDeck5.onTrue(endTelemetry);
 
         // reset the field-centric heading on left bumper press
         logitechBtnX.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+        
     }
-
+   
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return autoChooser.getSelected();
+        // autoChooser.getSelected();
     }
 
     public double getLogiRightYAxis() {

@@ -28,8 +28,8 @@ public final class Constants {
         // When using closed-loop control, the drive motor uses the control
         // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
         private static final Slot0Configs driveGains = new Slot0Configs()
-                .withKP(0.1).withKI(0).withKD(0)
-                .withKS(0).withKV(0.124);
+                .withKP(0.089).withKI(0).withKD(0)
+                .withKS(0.18725).withKV(0.122);
 
         // The closed-loop output type to use for the steer motors;
         // This affects the PID/FF gains for the steer motors
@@ -191,10 +191,14 @@ public final class Constants {
                         kBackRightEncoderInverted);
 
         public static final double KMaxSpeed = kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-        public static final double KMaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
+        public static final double KMaxAngularRate = RotationsPerSecond.of(1.8).in(RadiansPerSecond); // 3/4 of a rotation per
                                                                                            // second
         // max angular velocity
         public static final SwerveRequest.FieldCentric Kdrive = new SwerveRequest.FieldCentric()
+                .withDeadband(KMaxSpeed * 0.1).withRotationalDeadband(KMaxAngularRate * 0.1) // Add a 10% deadband
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        
+        public static final SwerveRequest.FieldCentricFacingAngle KdriveNoStear = new SwerveRequest.FieldCentricFacingAngle()
                 .withDeadband(KMaxSpeed * 0.1).withRotationalDeadband(KMaxAngularRate * 0.1) // Add a 10% deadband
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
     }

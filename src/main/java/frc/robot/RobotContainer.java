@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.EndTelemetry;
@@ -26,12 +25,17 @@ import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.generated.TunerSwerve.*;
 
 public class RobotContainer {
-
+    
+    public final CommandSwerveDrivetrain drivetrain;
+    public final DriveWithJoysticks driveWithJoysticks;
+    public final EndTelemetry endTelemetry;
+    private final SendableChooser<Command> autoChooser;
+    
     private double MaxSpeed = kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
     public static Joystick logitech;
@@ -41,10 +45,6 @@ public class RobotContainer {
     // public final CommandXboxController joystick = new CommandXboxController(1);
     public JoystickButton logitechBtnX, logitechBtnA, logitechBtnB, logitechBtnY, logitechBtnLB, logitechBtnRB,
             logitechBtnLT, logitechBtnRT, logitechBtnBack, logitechBtnStart; // Logitech Button
-
-    public JoystickButton xboxBtnA, xboxBtnB, xboxBtnX, xboxBtnY, xboxBtnLB, xboxBtnRB, xboxBtnStrt, xboxBtnSelect;
-
-    public Trigger xboxBtnRT, xboxBtsnLT;
 
     public JoystickButton compStreamDeck1, compStreamDeck2, compStreamDeck3, compStreamDeck4, compStreamDeck5,
             compStreamDeck6, compStreamDeck7, compStreamDeck8, compStreamDeck9, compStreamDeck10, compStreamDeck11,
@@ -64,14 +64,17 @@ public class RobotContainer {
             autonTestStreamDeck14,
             autonTestStreamDeck15;
 
-    public final CommandSwerveDrivetrain drivetrain = createDrivetrain();
-    public final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain);
-    public final EndTelemetry endTelemetry;
-    private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        // boolean isCompetition = false;
+
+        drivetrain = createDrivetrain();
+        driveWithJoysticks = new DriveWithJoysticks(drivetrain);
         endTelemetry = new EndTelemetry(logger);
+        
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
         logitech = new Joystick(KLogitechPort); // Logitech Dual Action
         compStreamDeck = new Joystick(KCompStreamDeckPort); // Stream Deck + vjoy
         testStreamDeck = new Joystick(KTestingStreamDeckPort); // Stream Deck + vjoy
@@ -136,19 +139,16 @@ public class RobotContainer {
         autonTestStreamDeck14 = new JoystickButton(testStreamDeck, 14);
         autonTestStreamDeck15 = new JoystickButton(testStreamDeck, 15);
         configureBindings();
-
-        
-        autoChooser = AutoBuilder.buildAutoChooser();
-
-        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> Kdrive.withVelocityX(-getLogiLeftYAxis() * KMaxSpeed)
-                .withVelocityY(-getLogiLeftXAxis() * KMaxSpeed)
-                .withRotationalRate(getLogiRightXAxis() * KMaxAngularRate)));
+        .withVelocityY(-getLogiLeftXAxis() * KMaxSpeed)
+        .withRotationalRate(getLogiRightXAxis() * KMaxAngularRate)));
+                 
+
 
         logitechBtnA.whileTrue(drivetrain.applyRequest(() -> brake));
         // logitechBtnB.whileTrue(drivetrain.applyRequest(
@@ -168,8 +168,9 @@ public class RobotContainer {
         logitechBtnX.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+        
     }
-
+   
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
         // autoChooser.getSelected();

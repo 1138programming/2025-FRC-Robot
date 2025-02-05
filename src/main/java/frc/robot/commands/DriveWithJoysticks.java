@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.TunerConstants.*;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -37,7 +39,9 @@ private double rot;
     fbSpeed = Robot.m_robotContainer.getLogiLeftYAxis();
     lrSpeed = Robot.m_robotContainer.getLogiLeftXAxis();
     rot = Robot.m_robotContainer.getLogiRightXAxis();
-    Robot.m_robotContainer.drivetrain.applyRequest(() -> Kdrive.withVelocityX(-fbSpeed * KMaxSpeed).withVelocityY(-lrSpeed * KMaxSpeed).withRotationalRate(-rot * KMaxAngularRate)); 
+    commandSwerveDrivetrain.applyRequest(() -> Kdrive.withVelocityX(-fbSpeed * KMaxSpeed)
+    .withVelocityY(-lrSpeed * KMaxSpeed)
+    .withRotationalRate(rot * KMaxAngularRate));  
   }
 
   // Called once the command ends or is interrupted.

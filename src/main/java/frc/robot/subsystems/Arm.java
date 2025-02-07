@@ -93,20 +93,20 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {}
 
-    public void tiltArmManually(DoubleSupplier speed) {
+    public void tiltArmManually(double speed) {
         
         //check if for top sensor
-        if (hallSensorTop.get() && speed.getAsDouble() > 0) {
-            speed = () -> 0;
+        if (hallSensorTop.get() && speed > 0) {
+            speed = 0;
         }
 
         //check if for bottom sensor
-        if (hallSensorBottom.get() && speed.getAsDouble() < 0) {
-            speed = () -> 0;
+        if (hallSensorBottom.get() && speed < 0) {
+            speed = 0;
             
         }
 
-        tiltMotor.set(speed.getAsDouble());
+        tiltMotor.set(speed);
 
         // double currentPosition = getTiltEncoder();
         // m_setpoint = new TrapezoidProfile.State(currentPosition, 0);

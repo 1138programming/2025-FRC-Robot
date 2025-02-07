@@ -6,7 +6,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -17,27 +16,44 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.Arm.TiltArmManually;
+import frc.robot.commands.Arm.TiltArmToSetPosition;
 import frc.robot.commands.Base.DriveWithJoysticks;
+import frc.robot.commands.Lift.MoveLift;
+import frc.robot.commands.Lift.MoveLiftToPos;
 import frc.robot.commands.Telemetry.EndTelemetry;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Lift;
+
 import static frc.robot.Constants.TunerConstants.*;
 import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.generated.TunerSwerve.*;
 
 public class RobotContainer {
-    
+
+    // Subsystems
     public final CommandSwerveDrivetrain drivetrain;
+    public final Arm arm;
+    public final Lift lift;
+
+    // Commands
     public final DriveWithJoysticks driveWithJoysticks;
     public final EndTelemetry endTelemetry;
+    public final MoveLift moveLift;
+    public final MoveLiftToPos moveLiftToPos;
+    public final TiltArmManually tiltArmManually;
+    public final TiltArmToSetPosition tiltArmToSetPosition;
+
+
     private final SendableChooser<Command> autoChooser;
-    
-    private double MaxSpeed = kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    // private final SwerveRequest.PointWheelsAt point = new
+    // SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(KMaxSpeed);
     public static Joystick logitech;
     public static Joystick compStreamDeck;
     public static Joystick testStreamDeck;
@@ -64,21 +80,33 @@ public class RobotContainer {
             autonTestStreamDeck14,
             autonTestStreamDeck15;
 
-
     public RobotContainer() {
 
+        // Subsystems
         drivetrain = createDrivetrain();
+        arm = new Arm();
+        lift = new Lift();
+
+        // Commands
         driveWithJoysticks = new DriveWithJoysticks(drivetrain);
         endTelemetry = new EndTelemetry(logger);
-        
-        autoChooser = AutoBuilder.buildAutoChooser();
+        moveLift = new MoveLift(lift, 0);
+        moveLiftToPos = new MoveLiftToPos(lift, 0);
+        tiltArmManually = new TiltArmManually(arm, 0);
+        tiltArmToSetPosition = new TiltArmToSetPosition(arm, 0);
 
+
+
+        // Auto Chooser For Shuffleboard
+        autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
+        // DS Ports
         logitech = new Joystick(KLogitechPort); // Logitech Dual Action
         compStreamDeck = new Joystick(KCompStreamDeckPort); // Stream Deck + vjoy
         testStreamDeck = new Joystick(KTestingStreamDeckPort); // Stream Deck + vjoy
         autonTestStreamDeck = new Joystick(KAutonTestingStreamDeckPort); // Stream Deck + vjoy
+
         // Logitch Buttons
         logitechBtnX = new JoystickButton(logitech, KLogitechButtonX);
         logitechBtnA = new JoystickButton(logitech, KLogitechButtonA);
@@ -91,6 +119,7 @@ public class RobotContainer {
         logitechBtnBack = new JoystickButton(logitech, 9);
         logitechBtnStart = new JoystickButton(logitech, 10);
 
+        // Streamdeck Pages used in match
         compStreamDeck1 = new JoystickButton(compStreamDeck, 1);
         compStreamDeck2 = new JoystickButton(compStreamDeck, 2);
         compStreamDeck3 = new JoystickButton(compStreamDeck, 3);
@@ -107,6 +136,7 @@ public class RobotContainer {
         compStreamDeck14 = new JoystickButton(compStreamDeck, 14);
         compStreamDeck15 = new JoystickButton(compStreamDeck, 15);
 
+        // Streamdeck Pages used for testing
         testStreamDeck1 = new JoystickButton(testStreamDeck, 1);
         testStreamDeck2 = new JoystickButton(testStreamDeck, 2);
         testStreamDeck3 = new JoystickButton(testStreamDeck, 3);
@@ -142,35 +172,30 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
+        // Cannot define in a command
         drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> Kdrive.withVelocityX(-getLogiLeftYAxis() * KMaxSpeed)
-        .withVelocityY(-getLogiLeftXAxis() * KMaxSpeed)
-        .withRotationalRate(getLogiRightXAxis() * KMaxAngularRate)));
-                 
+                .withVelocityY(-getLogiLeftXAxis() * KMaxSpeed)
+                .withRotationalRate(getLogiRightXAxis() * KMaxAngularRate)));
 
+        // reset the field-centric heading on x button press
+        logitechBtnX.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         logitechBtnA.whileTrue(drivetrain.applyRequest(() -> brake));
-        // logitechBtnB.whileTrue(drivetrain.applyRequest(
-        // () -> point.withModuleDirection(new Rotation2d(-getLogiLeftYAxis(),
-        // -getLogiLeftXAxis()))));
 
-        // Run SysId routines when holding back/st^art and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        // Run in desending order (Hold for alteast 5 seconds)
         testStreamDeck1.whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         testStreamDeck2.whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
         testStreamDeck3.whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         testStreamDeck4.whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         testStreamDeck5.onTrue(endTelemetry);
-
-        // reset the field-centric heading on left bumper press
-        logitechBtnX.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        testStreamDeck6.whileTrue(lift.sysIdQuasistatic(Direction.kForward));
+        testStreamDeck7.whileTrue(lift.sysIdQuasistatic(Direction.kReverse));
+        testStreamDeck8.whileTrue(lift.sysIdDynamic(Direction.kForward));
+        testStreamDeck9.whileTrue(lift.sysIdDynamic(Direction.kReverse));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-        
+
     }
-   
+
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
         // autoChooser.getSelected();

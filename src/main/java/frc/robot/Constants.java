@@ -26,18 +26,18 @@ public final class Constants {
         public static class TunerConstants {
                 // Both sets of gains need to be tuned to your individual robot.
 
-        // The steer motor uses any SwerveModule.SteerRequestType control request with
-        // the
-        // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-        private static final Slot0Configs steerGains = new Slot0Configs()
-                .withKP(100).withKI(0).withKD(0.4)
-                .withKS(0.1).withKV(2.33).withKA(0)
-                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
-        // When using closed-loop control, the drive motor uses the control
-        // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-        private static final Slot0Configs driveGains = new Slot0Configs()
-                .withKP(0.089).withKI(0).withKD(0)
-                .withKS(0.18725).withKV(0.122);
+                // The steer motor uses any SwerveModule.SteerRequestType control request with
+                // the
+                // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
+                private static final Slot0Configs steerGains = new Slot0Configs()
+                                .withKP(100).withKI(0).withKD(0.4)
+                                .withKS(0.1).withKV(2.33).withKA(0)
+                                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+                // When using closed-loop control, the drive motor uses the control
+                // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
+                private static final Slot0Configs driveGains = new Slot0Configs()
+                                .withKP(0.089).withKI(0).withKD(0)
+                                .withKS(0.18725).withKV(0.122);
 
                 // The closed-loop output type to use for the steer motors;
                 // This affects the PID/FF gains for the steer motors
@@ -79,9 +79,9 @@ public final class Constants {
                 // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
                 private static final Pigeon2Configuration pigeonConfigs = null;
 
-        // CAN bus that the devices are located on;
-        // All swerve devices must share the same CAN bus
-        public static final CANBus kCANBus = new CANBus("Base", "/logs");
+                // CAN bus that the devices are located on;
+                // All swerve devices must share the same CAN bus
+                public static final CANBus kCANBus = new CANBus("Base", "/logs");
 
                 // Theoretical free speed (m/s) at 12 V applied output;
                 // This needs to be tuned to your individual robot
@@ -142,8 +142,8 @@ public final class Constants {
                 private static final boolean kFrontLeftSteerMotorInverted = true;
                 private static final boolean kFrontLeftEncoderInverted = false;
 
-        private static final Distance kFrontLeftXPos = Inches.of(11.375);
-        private static final Distance kFrontLeftYPos = Inches.of(11.375);
+                private static final Distance kFrontLeftXPos = Inches.of(11.375);
+                private static final Distance kFrontLeftYPos = Inches.of(11.375);
 
                 // Front Right
                 private static final int kFrontRightDriveMotorId = 4;
@@ -153,30 +153,30 @@ public final class Constants {
                 private static final boolean kFrontRightSteerMotorInverted = true;
                 private static final boolean kFrontRightEncoderInverted = false;
 
-        private static final Distance kFrontRightXPos = Inches.of(11.375);
-        private static final Distance kFrontRightYPos = Inches.of(-11.375);
+                private static final Distance kFrontRightXPos = Inches.of(11.375);
+                private static final Distance kFrontRightYPos = Inches.of(-11.375);
 
-        // Back Left
-        private static final int kBackLeftDriveMotorId = 6;
-        private static final int kBackLeftSteerMotorId = 5;
-        private static final int kBackLeftEncoderId = 3;
-        private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.423095703125);
-        private static final boolean kBackLeftSteerMotorInverted = true;
-        private static final boolean kBackLeftEncoderInverted = false;
+                // Back Left
+                private static final int kBackLeftDriveMotorId = 6;
+                private static final int kBackLeftSteerMotorId = 5;
+                private static final int kBackLeftEncoderId = 3;
+                private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.423095703125);
+                private static final boolean kBackLeftSteerMotorInverted = true;
+                private static final boolean kBackLeftEncoderInverted = false;
 
-        private static final Distance kBackLeftXPos = Inches.of(-11.375);
-        private static final Distance kBackLeftYPos = Inches.of(11.375);
+                private static final Distance kBackLeftXPos = Inches.of(-11.375);
+                private static final Distance kBackLeftYPos = Inches.of(11.375);
 
-        // Back Right
-        private static final int kBackRightDriveMotorId = 8;
-        private static final int kBackRightSteerMotorId = 7;
-        private static final int kBackRightEncoderId = 4;
-        private static final Angle kBackRightEncoderOffset = Rotations.of(0.447265625);
-        private static final boolean kBackRightSteerMotorInverted = true;
-        private static final boolean kBackRightEncoderInverted = false;
+                // Back Right
+                private static final int kBackRightDriveMotorId = 8;
+                private static final int kBackRightSteerMotorId = 7;
+                private static final int kBackRightEncoderId = 4;
+                private static final Angle kBackRightEncoderOffset = Rotations.of(0.447265625);
+                private static final boolean kBackRightSteerMotorInverted = true;
+                private static final boolean kBackRightEncoderInverted = false;
 
-        private static final Distance kBackRightXPos = Inches.of(-11.375);
-        private static final Distance kBackRightYPos = Inches.of(-11.375);
+                private static final Distance kBackRightXPos = Inches.of(-11.375);
+                private static final Distance kBackRightYPos = Inches.of(-11.375);
 
                 public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontLeft = ConstantCreator
                                 .createModuleConstants(
@@ -207,18 +207,27 @@ public final class Constants {
                                                 kBackRightSteerMotorInverted,
                                                 kBackRightEncoderInverted);
 
-        public static final double KMaxSpeed = kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-        public static final double KMaxAngularRate = RotationsPerSecond.of(1.8).in(RadiansPerSecond); // 3/4 of a rotation per
-                                                                                           // second
-        // max angular velocity
-        public static final SwerveRequest.FieldCentric Kdrive = new SwerveRequest.FieldCentric()
-                .withDeadband(KMaxSpeed * 0.1).withRotationalDeadband(KMaxAngularRate * 0.1) // Add a 10% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        
-        public static final SwerveRequest.FieldCentricFacingAngle KdriveNoStear = new SwerveRequest.FieldCentricFacingAngle()
-                .withDeadband(KMaxSpeed * 0.1).withRotationalDeadband(KMaxAngularRate * 0.1) // Add a 10% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-    }
+                public static final double KMaxSpeed = kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
+                                                                                            // top speed
+
+                public static final double KMaxAngularRate = RotationsPerSecond.of(1.8).in(RadiansPerSecond); // 3/4 of
+                                                                                                              // a
+                                                                                                              // rotation
+                                                                                                              // per
+                // second
+                // max angular velocity
+                public static final SwerveRequest.FieldCentric Kdrive = new SwerveRequest.FieldCentric()
+                                .withDeadband(KMaxSpeed * 0.1).withRotationalDeadband(KMaxAngularRate * 0.1) // Add a
+                                                                                                             // 10%
+                                                                                                             // deadband
+                                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+                public static final SwerveRequest.FieldCentricFacingAngle KdriveNoStear = new SwerveRequest.FieldCentricFacingAngle()
+                                .withDeadband(KMaxSpeed * 0.1).withRotationalDeadband(KMaxAngularRate * 0.1) // Add a
+                                                                                                             // 10%
+                                                                                                             // deadband
+                                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        }
 
         public static class OperatorConstants {
                 // Controller Ports (check in Driver Station, IDs may be different for each
@@ -268,30 +277,17 @@ public final class Constants {
         }
 
         public static class LimelightConstants {
-                public static final double KlimelightMountAngleDegrees = 25.0; // Neeeds to be changed
-                public static final double KlimelightMountHeight = 0.508;
-                public static final double KShooterTiltMountHeight = 0.2286;
-                public static final double KspeakerHeight = 2.159;
-                public static final double[] KSpeakerCoordinatesBlue = new double[] { 0, 5.547868 }; // (X,Y) of the
-                                                                                                     // center
-                // public static final double[] KSpeakerCoordinatesBlue = new double[] { 0,
-                // 5.5474108 }; // (X,Y) of the center
-                // aprilTag
-                public static final double[] KspeakerAprilTagsBlue = new double[] { 7, 8 }; // Right To Left
-                public static final double[] KSpeakerCoordinatesRed = new double[] { 16.58, 5.547868 }; // (X,Y) of the
-                                                                                                        // center
-                // public static final double[] KSpeakerCoordinatesRed = new double[] { 16.52,
-                // 5.5474108 }; // (X,Y) of the center
-                // aprilTag
-                public static final double[] KspeakerAprilTagsRed = new double[] { 3, 4 }; // Right To Left
-                public static final double KlimeLightRotP = 0.0167;
+                public static final double KlimelightMountAngleDegrees = 0; // Neeeds to be changed
+                public static final double KlimelightMountHeight = 0;
+                public static final double KShooterTiltMountHeight = 0;
+                public static final double KlimeLightRotP = 0;
                 public static final double KlimeLightRotI = 0;
                 public static final double KlimeLightRotD = 0;
                 public static final double KlimeLightDriveP = 0;
                 public static final double KlimeLightDriveI = 0;
                 public static final double KlimeLightDriveD = 0;
                 public static final double KLimelightAngleDeadzone = 1;
-                public static final double KaprilTagOffset = 20;
+                public static final double KaprilTagOffset = 0;
                 public static final PIDController KlimelightrotControl = new PIDController(KlimeLightRotP,
                                 KlimeLightRotI,
                                 KlimeLightRotD);
@@ -315,9 +311,9 @@ public final class Constants {
 
                 public static final int KArmLimitSwitch = 0;
 
-                public static final double KArmControlP = 0.0;
-                public static final double KArmControlI = 0.0;
-                public static final double KArmControlD = 0.0;
+                public static final int KArmControlP = 0;
+                public static final int KArmControlI = 0;
+                public static final int KArmControlD = 0;
                 public static final int KMaxVoltage = 12; // in rps
                 public static final int KMaxAcceleration = 60; // in rps/s
 
@@ -351,7 +347,23 @@ public final class Constants {
                 public static final double KSpinMotor = 50;
 
                 public static final int KLiftCANCoderID = 2;
+
                 // Nothing tested
+
+                public static final int KMaxVoltage = 12; // in rps
+                public static final int KMaxAcceleration = 60; // in rps/s
+
+                public static class LiftPositionConstants {
+                        public static final int KLiftPositionReefL4 = 60;
+                        public static final int KLiftPositionReefL3 = 50;
+                        public static final int KLiftPositionReefL2 = 40;
+                        public static final int KLiftPositionReefL1 = 0; // could be between range 0-10
+
+                        public static final int KLiftPositionStore = 90; // assuming store means not used
+
+                        public static final int KLiftPositionIntakeGround = 340;
+                        public static final int KLiftPositionIntakeCoralStation = 55; // sloped tunnel is 55°
+                }
         }
 
 }

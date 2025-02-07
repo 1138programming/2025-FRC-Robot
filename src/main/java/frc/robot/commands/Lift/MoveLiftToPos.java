@@ -28,7 +28,7 @@ public class MoveLiftToPos extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    lift.SetLiftToPos(posInRot);
+    lift.MoveLiftToSetPositionCTRE(posInRot);
   }
 
   // Called once the command ends or is interrupted.

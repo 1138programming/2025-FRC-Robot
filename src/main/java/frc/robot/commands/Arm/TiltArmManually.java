@@ -6,9 +6,9 @@ import java.util.function.DoubleSupplier;
 
 public class TiltArmManually extends Command {
     private final Arm arm;
-    private final DoubleSupplier speedSupplier;
+    private final double speedSupplier;
 
-    public TiltArmManually(Arm arm, DoubleSupplier speed) {
+    public TiltArmManually(Arm arm, double speed) {
         this.arm = arm;
         this.speedSupplier = speed;
         addRequirements(arm);

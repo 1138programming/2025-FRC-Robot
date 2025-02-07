@@ -19,11 +19,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Arm.TiltArmManually;
 import frc.robot.commands.Arm.TiltArmToSetPosition;
 import frc.robot.commands.Base.DriveWithJoysticks;
+import frc.robot.commands.Coral.SpinCoralIntake;
 import frc.robot.commands.Lift.MoveLift;
 import frc.robot.commands.Lift.MoveLiftToPos;
 import frc.robot.commands.Telemetry.EndTelemetry;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Lift;
 
 import static frc.robot.Constants.TunerConstants.*;
@@ -36,6 +38,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain;
     public final Arm arm;
     public final Lift lift;
+    public final CoralIntake coralIntake;
 
     // Commands
     public final DriveWithJoysticks driveWithJoysticks;
@@ -44,7 +47,7 @@ public class RobotContainer {
     public final MoveLiftToPos moveLiftToPos;
     public final TiltArmManually tiltArmManually;
     public final TiltArmToSetPosition tiltArmToSetPosition;
-
+    public final SpinCoralIntake spinCoralIntake;
 
     private final SendableChooser<Command> autoChooser;
 
@@ -86,6 +89,7 @@ public class RobotContainer {
         drivetrain = createDrivetrain();
         arm = new Arm();
         lift = new Lift();
+        coralIntake = new CoralIntake();
 
         // Commands
         driveWithJoysticks = new DriveWithJoysticks(drivetrain);
@@ -94,6 +98,7 @@ public class RobotContainer {
         moveLiftToPos = new MoveLiftToPos(lift, 0);
         tiltArmManually = new TiltArmManually(arm, 0);
         tiltArmToSetPosition = new TiltArmToSetPosition(arm, 0);
+        spinCoralIntake = new SpinCoralIntake(coralIntake, 0);
 
 
 

@@ -364,6 +364,10 @@ public final class Constants {
                         public static final int KLiftPositionIntakeGround = 340;
                         public static final int KLiftPositionIntakeCoralStation = 55; // sloped tunnel is 55°
                 }
-        }
 
+        }
+        public static class CoralIntakeConstants {
+                public static final int KCoralIntakeMotorId = 0;
+                public static final int KCoralIntakeMotorLimitSwitchPort = 0;
+        }
 }

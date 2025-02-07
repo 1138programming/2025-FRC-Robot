@@ -10,9 +10,11 @@ import frc.robot.subsystems.CoralIntake;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SpinCoralIntake extends Command {
   private final CoralIntake coralIntake;
+  private double speed;
   /** Creates a new SpinCoralIntake. */
-  public SpinCoralIntake(CoralIntake coralIntake) {
+  public SpinCoralIntake(CoralIntake coralIntake, double speed) {
     this.coralIntake = coralIntake;
+    this.speed = speed;
     addRequirements(coralIntake);
   }
 
@@ -23,7 +25,7 @@ public class SpinCoralIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    coralIntake.setCoralIntakeSpeed(1);
+    coralIntake.setCoralIntakeSpeed(speed);
   }
 
   // Called once the command ends or is interrupted.

@@ -72,11 +72,12 @@ public class Lift extends SubsystemBase {
         // CANCoder
         spinLiftCANCoder = new CANcoder(KLiftCANCoderID);
         canCoderConfig = new CANcoderConfiguration();
+        
         // canCoderConfig.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
         canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
         spinLiftCANCoder.getConfigurator().apply(canCoderConfig);
 
-        voltageController = new VoltageOut(0);
+        
         // Motor
         liftMotor = new TalonFX(KSpinMotorID);
 
@@ -85,16 +86,18 @@ public class Lift extends SubsystemBase {
         liftMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         liftMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
         liftMotorConfig.Feedback.RotorToSensorRatio = 46.67;
-
+        
         liftMotor.getConfigurator().apply(liftMotorConfig);
-
+        
         m_PositionVoltage = new PositionVoltage(0).withEnableFOC(true);
         m_TrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(KMaxVoltage, KMaxAcceleration));
+        
+        voltageController = new VoltageOut(0);
 
         // pid config
         var slot0Configs = new Slot0Configs()
                 .withKP(0).withKI(0).withKD(0)
-                .withKS(0).withKV(2).withKA(0)
+                .withKS(0).withKV(0).withKA(0)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
         liftMotor.getConfigurator().apply(slot0Configs);

@@ -329,7 +329,7 @@ public final class Constants {
                         public static final int KArmPositionReefL2 = 40;
                         public static final int KArmPositionReefL1 = 0; // could be between range 0-10
 
-                        public static final int KArmPositionStore = 90; // assuming store means not used
+                        public static final int KArmPositionStow = 90; // assuming store means not used
 
                         public static final int KArmPositionIntakeGround = 340;
                         public static final int KArmPositionIntakeCoralStation = 55; // sloped tunnel is 55°
@@ -359,7 +359,7 @@ public final class Constants {
                         public static final int KLiftPositionReefL2 = 40;
                         public static final int KLiftPositionReefL1 = 0; // could be between range 0-10
 
-                        public static final int KLiftPositionStore = 90; // assuming store means not used
+                        public static final int KLiftPositionStow = 90; // assuming store means not used
 
                         public static final int KLiftPositionIntakeGround = 340;
                         public static final int KLiftPositionIntakeCoralStation = 55; // sloped tunnel is 55°

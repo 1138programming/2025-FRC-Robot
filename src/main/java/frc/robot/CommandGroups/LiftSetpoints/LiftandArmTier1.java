@@ -16,14 +16,14 @@ import static frc.robot.Constants.ArmConstants.ArmPositionConstants.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class LiftandArmTier4 extends ParallelCommandGroup {
-  /** Creates a new LiftandArmTier4. */
-  public LiftandArmTier4(Arm arm, Lift lift) {
+public class LiftandArmTier1 extends ParallelCommandGroup {
+  /** Creates a new LiftandArmTier1. */
+  public LiftandArmTier1(Arm arm, Lift lift) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new TiltArmToSetPosition(arm, KArmPositionReefL4),
-      new MoveLiftToPos(lift, KLiftPositionReefL4)
+      new TiltArmToSetPosition(arm, KArmPositionReefL1),
+      new MoveLiftToPos(lift, KLiftPositionReefL1)
     );
   }
 }

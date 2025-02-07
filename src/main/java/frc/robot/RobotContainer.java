@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -16,6 +14,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.CommandGroups.LiftSetpoints.LiftandArmStowed;
+import frc.robot.CommandGroups.LiftSetpoints.LiftandArmTier1;
+import frc.robot.CommandGroups.LiftSetpoints.LiftandArmTier2;
+import frc.robot.CommandGroups.LiftSetpoints.LiftandArmTier3;
+import frc.robot.CommandGroups.LiftSetpoints.LiftandArmTier4;
 import frc.robot.commands.Arm.TiltArmManually;
 import frc.robot.commands.Arm.TiltArmToSetPosition;
 import frc.robot.commands.Base.DriveWithJoysticks;
@@ -49,6 +52,12 @@ public class RobotContainer {
     public final TiltArmToSetPosition tiltArmToSetPosition;
     public final SpinCoralIntake spinCoralIntake;
 
+    //Command Groups
+    public final LiftandArmTier4 liftandArmTier4;
+    public final LiftandArmTier3 liftandArmTier3;
+    public final LiftandArmTier2 liftandArmTier2;
+    public final LiftandArmTier1 liftandArmTier1;
+    public final LiftandArmStowed liftandArmStowed;
     private final SendableChooser<Command> autoChooser;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -99,6 +108,13 @@ public class RobotContainer {
         tiltArmManually = new TiltArmManually(arm, 0);
         tiltArmToSetPosition = new TiltArmToSetPosition(arm, 0);
         spinCoralIntake = new SpinCoralIntake(coralIntake, 0);
+
+        //Command Groups
+        liftandArmTier4 = new LiftandArmTier4(arm, lift);
+        liftandArmTier3 = new LiftandArmTier3(arm, lift);
+        liftandArmTier2 = new LiftandArmTier2(arm, lift);
+        liftandArmTier1 = new LiftandArmTier1(arm, lift);
+        liftandArmStowed = new LiftandArmStowed(arm, lift);
 
 
 

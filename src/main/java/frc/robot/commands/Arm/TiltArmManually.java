@@ -5,11 +5,11 @@ import frc.robot.subsystems.Arm;
 
 public class TiltArmManually extends Command {
     private final Arm arm;
-    private final double speedSupplier;
+    private final double speed;
 
     public TiltArmManually(Arm arm, double speed) {
         this.arm = arm;
-        this.speedSupplier = speed;
+        this.speed = speed;
         addRequirements(arm);
     }
 
@@ -20,7 +20,7 @@ public class TiltArmManually extends Command {
 
     @Override
     public void execute() {
-        arm.tiltArmManually(speedSupplier);
+        arm.tiltArmManually(speed);
     }
 
     @Override

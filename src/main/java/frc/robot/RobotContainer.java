@@ -26,6 +26,7 @@ import frc.robot.commands.Coral.SpinCoralIntake;
 import frc.robot.commands.Lift.MoveLift;
 import frc.robot.commands.Lift.MoveLiftToPos;
 import frc.robot.commands.Telemetry.EndTelemetry;
+import frc.robot.commands.Telemetry.StartTelemetry;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
@@ -46,11 +47,15 @@ public class RobotContainer {
     // Commands
     public final DriveWithJoysticks driveWithJoysticks;
     public final EndTelemetry endTelemetry;
-    public final MoveLift moveLift;
+    public final StartTelemetry startTelemetry;
+    public final MoveLift moveLiftUp;
+    public final MoveLift moveLiftDown;
     public final MoveLiftToPos moveLiftToPos;
-    public final TiltArmManually tiltArmManually;
+    public final TiltArmManually tiltArmManuallyUp;
+    public final TiltArmManually tiltArmManuallyDown;
     public final TiltArmToSetPosition tiltArmToSetPosition;
-    public final SpinCoralIntake spinCoralIntake;
+    public final SpinCoralIntake spinCoralIntakeForward;
+    public final SpinCoralIntake spinCoralIntakeBackward;
 
     //Command Groups
     public final LiftandArmTier4 liftandArmTier4;
@@ -103,11 +108,15 @@ public class RobotContainer {
         // Commands
         driveWithJoysticks = new DriveWithJoysticks(drivetrain);
         endTelemetry = new EndTelemetry(logger);
-        moveLift = new MoveLift(lift, 0);
+        startTelemetry = new StartTelemetry(logger);
+        moveLiftUp = new MoveLift(lift, 0.1);
+        moveLiftDown = new MoveLift(lift, -0.1);
         moveLiftToPos = new MoveLiftToPos(lift, 0);
-        tiltArmManually = new TiltArmManually(arm, 0);
+        tiltArmManuallyUp = new TiltArmManually(arm, 0.1);
+        tiltArmManuallyDown = new TiltArmManually(arm, -0.1);
         tiltArmToSetPosition = new TiltArmToSetPosition(arm, 0);
-        spinCoralIntake = new SpinCoralIntake(coralIntake, 0);
+        spinCoralIntakeForward = new SpinCoralIntake(coralIntake, 0.1);
+        spinCoralIntakeBackward = new SpinCoralIntake(coralIntake, -0.1);
 
         //Command Groups
         liftandArmTier4 = new LiftandArmTier4(arm, lift);
@@ -202,16 +211,27 @@ public class RobotContainer {
         logitechBtnX.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         logitechBtnA.whileTrue(drivetrain.applyRequest(() -> brake));
-
+        
+        //Base Sysid
         testStreamDeck1.whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         testStreamDeck2.whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
         testStreamDeck3.whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         testStreamDeck4.whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        
+        //logger
         testStreamDeck5.onTrue(endTelemetry);
+        testStreamDeck10.onTrue(startTelemetry);
+
+        //Lift Sysid
         testStreamDeck6.whileTrue(lift.sysIdQuasistatic(Direction.kForward));
         testStreamDeck7.whileTrue(lift.sysIdQuasistatic(Direction.kReverse));
         testStreamDeck8.whileTrue(lift.sysIdDynamic(Direction.kForward));
         testStreamDeck9.whileTrue(lift.sysIdDynamic(Direction.kReverse));
+
+        testStreamDeck11.whileTrue(spinCoralIntakeForward);
+        testStreamDeck12.whileTrue(spinCoralIntakeBackward);
+        testStreamDeck13.whileTrue(tiltArmManuallyUp);
+        testStreamDeck14.whileTrue(tiltArmManuallyDown);
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

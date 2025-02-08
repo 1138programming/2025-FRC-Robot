@@ -125,5 +125,9 @@ public class Telemetry {
     public void endTelemetry() {
         SignalLogger.stop();
     }
+
+    public void startTelemetry() {
+        SignalLogger.start();
+    }
 }
 

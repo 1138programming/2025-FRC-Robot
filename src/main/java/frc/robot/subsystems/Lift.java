@@ -2,16 +2,20 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.LiftConstants.*;
+import static frc.robot.Constants.LiftConstants.LiftPositionConstants.KLiftControlP;
+import static frc.robot.Constants.DeviceConstants.*;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -19,6 +23,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
@@ -33,12 +38,13 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 public class Lift extends SubsystemBase {
     private TalonFX liftMotor;
     private TalonFXConfiguration liftMotorConfig;
+    private MotorOutputConfigs motorOutputConfigs;
 
-    private CANcoder spinLiftCANCoder;
+    private CANcoder liftCANCoder;
     private CANcoderConfiguration canCoderConfig;
 
-    private DigitalInput toplimitSwitch = new DigitalInput(0);
-    private DigitalInput bottomlimitSwitch = new DigitalInput(1);
+    private DigitalInput toplimitSwitch;
+    private DigitalInput bottomlimitSwitch;
 
     private double startingAngle;
 
@@ -48,18 +54,18 @@ public class Lift extends SubsystemBase {
     // in init function, set slot 0 gains
 
     private PositionVoltage m_PositionVoltage;
-    
+
     private TrapezoidProfile m_TrapezoidProfile;
 
     private TrapezoidProfile.State m_goal;
     private TrapezoidProfile.State m_setpoint;
 
-
+    private boolean manualControl = false;
 
     private final SysIdRoutine m_sysIdRoutineLift = new SysIdRoutine(
             new SysIdRoutine.Config(
                     null, // Use default ramp rate (1 V/s)
-                    Volts.of(7), // Use dynamic voltage of 7 V
+                    Volts.of(5), // Use dynamic voltage of 7 V
                     null, // Use default timeout (10 s)
                     // Log state with SignalLogger class
                     state -> SignalLogger.writeString("SysIdLift_State", state.toString())),
@@ -70,34 +76,38 @@ public class Lift extends SubsystemBase {
 
     public Lift() {
         // CANCoder
-        spinLiftCANCoder = new CANcoder(KLiftCANCoderID);
+        liftCANCoder = new CANcoder(KLiftCANCoderID);
         canCoderConfig = new CANcoderConfiguration();
-        
+
+        toplimitSwitch = new DigitalInput(KLiftTopLimitSwitch);
+        bottomlimitSwitch = new DigitalInput(KLiftBottomLImitSwitch);
+
         // canCoderConfig.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
         canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-        spinLiftCANCoder.getConfigurator().apply(canCoderConfig);
+        canCoderConfig.MagnetSensor.MagnetOffset = -1.87;
+        liftCANCoder.getConfigurator().apply(canCoderConfig);
 
-        
         // Motor
-        liftMotor = new TalonFX(KSpinMotorID);
+        liftMotor = new TalonFX(KLiftMotorID);
 
         liftMotorConfig = new TalonFXConfiguration();
-        liftMotorConfig.Feedback.FeedbackRemoteSensorID = spinLiftCANCoder.getDeviceID();
+        liftMotorConfig.Feedback.FeedbackRemoteSensorID = liftCANCoder.getDeviceID();
         liftMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         liftMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
         liftMotorConfig.Feedback.RotorToSensorRatio = 46.67;
-        
+        liftMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
         liftMotor.getConfigurator().apply(liftMotorConfig);
-        
+
         m_PositionVoltage = new PositionVoltage(0).withEnableFOC(true);
         m_TrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(KMaxVoltage, KMaxAcceleration));
-        
-        voltageController = new VoltageOut(0);
+
+        voltageController = new VoltageOut(0).withEnableFOC(false);
 
         // pid config
         var slot0Configs = new Slot0Configs()
-                .withKP(0).withKI(0).withKD(0)
-                .withKS(0).withKV(0).withKA(0)
+                .withKP(8).withKI(0).withKD(0)
+                .withKS(3.2186).withKV(1.6689).withKA(0).withKG(0.34152)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
         liftMotor.getConfigurator().apply(slot0Configs);
@@ -106,36 +116,24 @@ public class Lift extends SubsystemBase {
 
         startingAngle = 0;
 
-        m_goal = new TrapezoidProfile.State(0, 0); 
+        m_goal = new TrapezoidProfile.State(0, 0);
 
         m_setpoint = new TrapezoidProfile.State();
     }
 
     public void setMotorVoltage(Voltage volts) {
-        if (volts.magnitude() > 0) {
-            if (toplimitSwitch.get()) {
-                liftMotor.setControl(voltageController.withOutput(volts));
-            } else {
-                liftMotor.setControl(voltageController.withOutput(0));
-            }
-        } else {
-            if (bottomlimitSwitch.get()) {
-                liftMotor.setControl(voltageController.withOutput(0));
-            } else {
-                liftMotor.setControl(voltageController.withOutput(volts));
-            }
-        }
+        liftMotor.setControl(voltageController.withOutput(volts));
     }
 
     public void setMotorSpeed(double speed) {
         if (speed > 0) {
-            if (toplimitSwitch.get()) {
-                liftMotor.set(speed);
+            if (!toplimitSwitch.get()) {
+                liftMotor.set(0);
             } else {
                 liftMotor.set(speed);
             }
         } else {
-            if (bottomlimitSwitch.get()) {
+            if (!bottomlimitSwitch.get()) {
                 liftMotor.set(0);
             } else {
                 liftMotor.set(speed);
@@ -143,26 +141,40 @@ public class Lift extends SubsystemBase {
         }
     }
 
+    public void stopLift() {
+        liftMotor.set(0);
+    }
+
     public void MoveLiftToSetPositionCTRE(double position) {
-        //Should call setArmPosition encorperating steamdeck button values to correspond to set points
-        m_goal = new TrapezoidProfile.State(position, 0); //new goal position
-        m_setpoint = m_TrapezoidProfile.calculate(0.020, m_setpoint, m_goal); //calculates the new setpoint based on the new goal
+        // Should call setArmPosition encorperating steamdeck button values to
+        // correspond to set point
+        // Should call setArmPosition encorperating steamdeck button values to
+        // correspond to set points
+        m_goal = new TrapezoidProfile.State(position, 0); // new goal position
+        m_setpoint = m_TrapezoidProfile.calculate(0.020, m_setpoint, m_goal); // calculates the new setpoint based on
+                                                                              // the new goal
 
         m_PositionVoltage.Position = m_setpoint.position;
         m_PositionVoltage.Velocity = m_setpoint.velocity;
-        liftMotor.setControl(m_PositionVoltage);
+        if (!manualControl) {
+            liftMotor.setControl(m_PositionVoltage);
+        }
     }
 
     // PID
     public void MoveLiftToSetPositionWPI(double setpoint) {
-        // In rotations (degrees/360)
-        liftMotor.setControl(m_request.withPosition(setpoint));
+        if (!manualControl) {
+            liftMotor.setControl(m_request.withPosition(setpoint));
+        }
     }
 
     public double getLiftCANCoder() {
-        double angle = spinLiftCANCoder.getPosition().getValueAsDouble() * 360 + startingAngle;
+        double angle = liftCANCoder.getPosition().getValueAsDouble() * 360;
         return angle;
+    }
 
+    public void setManualControl() {
+        manualControl = !manualControl;
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -176,6 +188,10 @@ public class Lift extends SubsystemBase {
     // Limit Switches
     @Override
     public void periodic() {
+        SmartDashboard.putBoolean("Lift Top", toplimitSwitch.get());
+        SmartDashboard.putBoolean("Lift Bottom", bottomlimitSwitch.get());
+        SmartDashboard.putNumber("Lift encoder", liftCANCoder.getPosition().getValueAsDouble());
+        SmartDashboard.putBoolean("Lift Manual Control", manualControl);
 
     }
 }

@@ -20,6 +20,7 @@ public class MoveLift extends Command {
 
     @Override
     public void end(boolean interrDownted) {
+    
     }
 
     @Override

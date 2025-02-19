@@ -16,13 +16,35 @@ import edu.wpi.first.units.measure.*;
 // https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/index.html
 
 /*IDs taken
- * Motors: 1, 2, 3, 4, 5, 6, 7, 8, 9 
- * Encoders: 1, 2, 3, 4
- * Digital Inputs: 0, 1
- * Pidgeon:
- */
+* Motors: 1, 2, 3, 4, 5, 6, 7, 8, 9 
+* Cancoders: 1, 2, 3, 4, 5
+* PWM: 
+* DIO: 1, 2, 3
+* Pidgeon: 0
+*/
 
 public final class Constants {
+        public static class DeviceConstants {
+                // Motors
+                // IDS 1-8 For Swerve
+                public static final int KTiltArmId = 9;
+                public static final int KLiftMotorID = 10;
+                public static final int KCoralIntakeMotorId = 11;
+
+                // Cancoder
+                // IDS 1-4 For Swerve
+                public static final int KLiftCANCoderID = 5;
+
+                // PWM
+
+                // DIO
+                public static final int KArmLimitSwitch = 4;
+                public static final int KCoralIntakeMotorLimitSwitch = 3;
+                public static final int KTiltThroughEncoderId = 2;
+                public static final int KLiftTopLimitSwitch = 1;
+                public static final int KLiftBottomLImitSwitch = 0;
+        }
+
         public static class TunerConstants {
                 // Both sets of gains need to be tuned to your individual robot.
 
@@ -81,7 +103,7 @@ public final class Constants {
 
                 // CAN bus that the devices are located on;
                 // All swerve devices must share the same CAN bus
-                public static final CANBus kCANBus = new CANBus("Base", "/logs");
+                public static final CANBus kCANBus = new CANBus("Base");
 
                 // Theoretical free speed (m/s) at 12 V applied output;
                 // This needs to be tuned to your individual robot
@@ -207,6 +229,8 @@ public final class Constants {
                                                 kBackRightSteerMotorInverted,
                                                 kBackRightEncoderInverted);
 
+                // public static final double KMaxSpeed = kSpeedAt12Volts.in(MetersPerSecond);
+                // // kSpeedAt12Volts desired
                 public static final double KMaxSpeed = kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
                                                                                             // top speed
 
@@ -227,6 +251,11 @@ public final class Constants {
                                                                                                              // 10%
                                                                                                              // deadband
                                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+                public static final double KBaseTurboMode = 1.0;
+                public static final double KBaseNormalMode = 0.6;
+                public static final double KBaseSlowMode = 0.3;
+
         }
 
         public static class OperatorConstants {
@@ -262,6 +291,8 @@ public final class Constants {
                 public static final int KLogitechRightBumper = 6;
                 public static final int KLogitechLeftTrigger = 7;
                 public static final int KLogitechRightTrigger = 8;
+                public static final int KLogitechBtnBack = 9;
+                public static final int KLogitechRightStart = 10;
 
                 // Xbox Button Constants
                 public static final int KXboxButtonA = 1;
@@ -297,19 +328,14 @@ public final class Constants {
         }
 
         public static class ArmConstants {
-
-                public static final int KTiltArmId = 9;
-
-                public static final int KTiltThroughEncoderId = 4;
                 public static final int KTiltThroughEncoderFullRotationValue = 360; // Troughbore
-                public static final int KTiltThroughEncoderZeroPosition = 0; // Throughbore -> check complete offset in
-                                                                             // future
-                public static final int KTiltThroughEncoderOffset = 0; // TODO: test offset
+                public static final double KTiltThroughEncoderZeroPosition = -39.5; // Throughbore -> check complete
+                                                                                    // offset
+                                                                                    // in
+                                                                                    // future
 
-                public static final int KHallSensorTopId = 0; // TODO: check if digital input id is available
-                public static final int KHallSensorBottomId = 1;
-
-                public static final int KArmLimitSwitch = 0;
+                public static final double KArmStopVelocity = 0;
+                public static final double KArmMoveVelocity = 0.4;
 
                 public static final int KArmControlP = 0;
                 public static final int KArmControlI = 0;
@@ -317,57 +343,49 @@ public final class Constants {
                 public static final int KMaxVoltage = 12; // in rps
                 public static final int KMaxAcceleration = 60; // in rps/s
 
-                public static final double KArmDeadZone = 1.0; // in degrees
+                public static final int KArmDeadZone = 1; // in degrees
 
                 public static class ArmPositionConstants {
+                        public static final int KArmPositionStow = 12; // assuming store means not used
 
-                        // all aplceholder measured from degrese assuming bot is right next to lowest
-                        // level of reef
-                        // and arm starts halfway up the base of the reef
                         public static final int KArmPositionReefL4 = 60;
-                        public static final int KArmPositionReefL3 = 50;
-                        public static final int KArmPositionReefL2 = 40;
+                        public static final int KArmPositionReefL3 = 235;
+                        public static final int KArmPositionReefL2 = 235;
                         public static final int KArmPositionReefL1 = 0; // could be between range 0-10
 
-                        public static final int KArmPositionStow = 90; // assuming store means not used
-
-                        public static final int KArmPositionIntakeGround = 340;
-                        public static final int KArmPositionIntakeCoralStation = 55; // sloped tunnel is 55°
-
+                        public static final int KArmPositionIntakeCoralStation = 12; // sloped tunnel is 55°
+                        public static final int KArmPositionIntakeGround = 0; // Unknown
                 }
         }
 
         public static class LiftConstants {
-                // Lift Constants
-                public static final int KSpinMotorID = 1;
 
-                public static final int KLimitSwitchTop = 2;
-                public static final int KLimitSwitchBottom = -2;
-
-                public static final double KSpinMotor = 50;
-
-                public static final int KLiftCANCoderID = 2;
-
-                // Nothing tested
+                public static final double KLiftStopVelocity = 0;
+                public static final double KLiftMoveVelocity = 0.4;
 
                 public static final int KMaxVoltage = 12; // in rps
                 public static final int KMaxAcceleration = 60; // in rps/s
 
                 public static class LiftPositionConstants {
-                        public static final int KLiftPositionReefL4 = 60;
-                        public static final int KLiftPositionReefL3 = 50;
-                        public static final int KLiftPositionReefL2 = 40;
-                        public static final int KLiftPositionReefL1 = 0; // could be between range 0-10
+                        // Takes about 6 rotations to fully extend
+                        public static final double KLiftPositionStow = 0.3; // assuming store means not used
 
-                        public static final int KLiftPositionStow = 90; // assuming store means not used
+                        public static final int KLiftControlP = 0;
+                        public static final int KLiftControlI = 0;
+                        public static final int KLiftControlD = 0;
+                        public static final int KLiftMaxVoltage = 12; // in rps
+                        public static final double KLiftPositionReefL4 = 0;
+                        public static final double KLiftPositionReefL3 = 4.5;
+                        public static final double KLiftPositionReefL2 = 2.5;
+                        public static final double KLiftPositionReefL1 = 0; // could be between range 0-10
 
                         public static final int KLiftPositionIntakeGround = 340;
                         public static final int KLiftPositionIntakeCoralStation = 55; // sloped tunnel is 55°
                 }
 
         }
+
         public static class CoralIntakeConstants {
-                public static final int KCoralIntakeMotorId = 0;
-                public static final int KCoralIntakeMotorLimitSwitchPort = 0;
+                public static final double KCoralIntakeSpeed = 1;
         }
 }

@@ -37,8 +37,8 @@ private double rot;
     fbSpeed = Robot.m_robotContainer.getLogiLeftYAxis();
     lrSpeed = Robot.m_robotContainer.getLogiLeftXAxis();
     rot = Robot.m_robotContainer.getLogiRightXAxis();
-    commandSwerveDrivetrain.applyRequest(() -> Kdrive.withVelocityX(-fbSpeed * KMaxSpeed)
-    .withVelocityY(-lrSpeed * KMaxSpeed)
+    commandSwerveDrivetrain.applyRequest(() -> Kdrive.withVelocityX(fbSpeed * KMaxSpeed)
+    .withVelocityY(lrSpeed * KMaxSpeed)
     .withRotationalRate(rot * KMaxAngularRate));  
   }
 

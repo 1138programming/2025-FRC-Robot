@@ -2,40 +2,38 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Lift;
+package frc.robot.commands.Base;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Lift;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class MoveLiftToPos extends Command {
-  private Lift lift;
-  private double posInRot;
-
-  /** Creates a new MoveLiftToPos. */
-  public MoveLiftToPos(Lift lift, double posInRot) {
-    this.lift = lift;
-    this.posInRot = posInRot;
-    addRequirements(lift);
+public class BaseSpeed extends Command {
+  private Arm arm;
+  private double speed;
+  /** Creates a new BaseTurbo. */
+  public BaseSpeed(Arm arm, double speed) {
+    this.arm = arm;
+    this.speed = speed;
+    addRequirements(arm);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    arm.setSwerveMaxSpeed(speed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    lift.MoveLiftToSetPositionCTRE(posInRot);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    lift.stopLift();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

@@ -28,14 +28,16 @@ public class TiltArmToSetPosition extends Command {
     
     @Override
     public void end(boolean interrupted) {
-        if (interrupted) {
+        // if (interrupted) {
             arm.stop();
-        }
+        // }
     }
     @Override
     public boolean isFinished() {
-        return arm.isAtSetPosition();
+        // return arm.isAtSetPosition();
+        return false;
     }
+
 
 
 

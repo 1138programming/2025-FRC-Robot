@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Base;
 
 import static frc.robot.Constants.TunerConstants.*;
 
@@ -37,7 +37,9 @@ private double rot;
     fbSpeed = Robot.m_robotContainer.getLogiLeftYAxis();
     lrSpeed = Robot.m_robotContainer.getLogiLeftXAxis();
     rot = Robot.m_robotContainer.getLogiRightXAxis();
-    Robot.m_robotContainer.drivetrain.applyRequest(() -> Kdrive.withVelocityX(-fbSpeed * KMaxSpeed).withVelocityY(-lrSpeed * KMaxSpeed).withRotationalRate(-rot * KMaxAngularRate)); 
+    commandSwerveDrivetrain.applyRequest(() -> Kdrive.withVelocityX(fbSpeed * KMaxSpeed)
+    .withVelocityY(lrSpeed * KMaxSpeed)
+    .withRotationalRate(rot * KMaxAngularRate));  
   }
 
   // Called once the command ends or is interrupted.

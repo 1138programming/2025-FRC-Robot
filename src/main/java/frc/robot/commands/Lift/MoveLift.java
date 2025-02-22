@@ -15,7 +15,7 @@ public class MoveLift extends Command {
 
     @Override
     public void execute() {
-        lift.setMotorSpeed(speed);
+        lift.setLiftElevatorSpeed(speed);
     }
 
     @Override

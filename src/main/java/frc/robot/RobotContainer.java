@@ -51,6 +51,7 @@ public class RobotContainer {
     public final Arm arm;
     public final Lift lift;
     public final CoralIntake coralIntake;
+    public final SubsystemUtil subsystemUtil;
 
     // Commands
     public final DriveWithJoysticks driveWithJoysticks;
@@ -86,7 +87,8 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
-    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    // private final SwerveRequest.SwerveDriveBrake brake = new
+    // SwerveRequest.SwerveDriveBrake();
     // private final SwerveRequest.PointWheelsAt point = new
     // SwerveRequest.PointWheelsAt();
 
@@ -124,13 +126,14 @@ public class RobotContainer {
         arm = new Arm();
         lift = new Lift();
         coralIntake = new CoralIntake();
+        subsystemUtil = new SubsystemUtil();
 
         // Commands
         driveWithJoysticks = new DriveWithJoysticks(drivetrain);
-        
-        baseTurboMode = new BaseSpeed(arm, KBaseTurboMode);
-        baseNormalMode = new BaseSpeed(arm, KBaseNormalMode);
-        baseSlowMode = new BaseSpeed(arm, KBaseSlowMode);
+
+        baseTurboMode = new BaseSpeed(subsystemUtil, KBaseTurboMode);
+        baseNormalMode = new BaseSpeed(subsystemUtil, KBaseNormalMode);
+        baseSlowMode = new BaseSpeed(subsystemUtil, KBaseSlowMode);
 
         startTelemetry = new StartTelemetry(logger);
         endTelemetry = new EndTelemetry(logger);
@@ -145,7 +148,7 @@ public class RobotContainer {
         tiltArmManuallyUp = new TiltArmManually(arm, KArmMoveVelocity);
         tiltArmManuallyDown = new TiltArmManually(arm, -KArmMoveVelocity);
         armStow = new TiltArmToSetPosition(arm, KArmPositionStow);
-        armtopos = new TiltArmToSetPosition(arm, 0);
+        armtopos = new TiltArmToSetPosition(arm, 50);
         setArmManualMode = new SetArmManualMode(arm);
 
         stopCoralIntake = new SpinCoralIntake(coralIntake, 0);
@@ -276,71 +279,77 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+
         // Default Commands
         drivetrain.setDefaultCommand(drivetrain.applyRequest(
-                () -> Kdrive.withVelocityX(getLogiLeftYAxis() * KMaxSpeed)
-                        .withVelocityY(getLogiLeftXAxis() * KMaxSpeed)
+                () -> Kdrive.withVelocityX(getLogiLeftYAxis() * KMaxSpeed * subsystemUtil.getSwerveMaxSpeed())
+                        .withVelocityY(getLogiLeftXAxis() * KMaxSpeed * subsystemUtil.getSwerveMaxSpeed())
                         .withRotationalRate(getLogiRightXAxis() * KMaxAngularRate)));
         arm.setDefaultCommand(armStow);
         lift.setDefaultCommand(liftStow);
         coralIntake.setDefaultCommand(stopCoralIntake);
 
-        //Logitech Controller:
+        // Logitech Controller:
+
+        // Reset the field-centric heading on y button press
+        logitechBtnY.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        logitechBtnRB.whileTrue(spinCoralIntakeForward);
+        logitechBtnRT.whileTrue(spinCoralIntakeBackward);
+
+        logitechBtnLB.whileTrue(baseTurboMode);
+        logitechBtnLT.whileTrue(baseSlowMode);
+
+        // When either button is released, it sets it equal to normal mode
+        logitechBtnLB.onFalse(baseNormalMode);
+        logitechBtnLT.onFalse(baseNormalMode);
+
+        // Comp Stream Deck:
+
+        // Lift and Arm Setpoints
+        compStreamDeck2.whileTrue(liftandArmTier4);
+        compStreamDeck1.whileTrue(liftandArmTier3);
+        compStreamDeck6.whileTrue(liftandArmTier2);
+        compStreamDeck11.whileTrue(liftandArmTier1);
         
-            // Reset the field-centric heading on y button press
-            logitechBtnY.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-            logitechBtnRB.whileTrue(spinCoralIntakeForward);
-            logitechBtnRT.whileTrue(spinCoralIntakeBackward);
+        // Coral Intake
+        compStreamDeck5.whileTrue(spinCoralIntakeForward);
+        compStreamDeck10.whileTrue(spinCoralIntakeBackward);
 
-            logitechBtnLB.whileTrue(baseTurboMode);
-            logitechBtnLT.whileTrue(baseSlowMode);
-            //When either button is released, it sets it equal to normal mode
-            logitechBtnLB.onFalse(baseNormalMode);
-            logitechBtnLT.onFalse(baseNormalMode);
-        
-        //Comp Stream Deck:
-            //Lift and Arm Setpoints
-            compStreamDeck1.whileTrue(liftandArmTier3);
-            compStreamDeck6.whileTrue(liftandArmTier2);
-            compStreamDeck11.whileTrue(liftandArmTier1);
+        // Manual Modes
+        compStreamDeck13.onTrue(setArmManualMode);
+        compStreamDeck14.onTrue(setLiftManualMode);
 
-            //Coral Intake
-            compStreamDeck5.whileTrue(spinCoralIntakeForward);
-            compStreamDeck10.whileTrue(spinCoralIntakeBackward);
+        compStreamDeck3.whileTrue(tiltArmManuallyUp);
+        compStreamDeck8.whileTrue(tiltArmManuallyDown);
+        compStreamDeck4.whileTrue(moveLiftUp);
+        compStreamDeck9.whileTrue(moveLiftDown);
 
-            //Manual Modes
-            compStreamDeck13.onTrue(setArmManualMode);
-            compStreamDeck14.onTrue(setLiftManualMode);
+        // Test Stream Deck:
 
-            compStreamDeck3.whileTrue(tiltArmManuallyUp);
-            compStreamDeck8.whileTrue(tiltArmManuallyDown);
-            compStreamDeck4.whileTrue(moveLiftUp);
-            compStreamDeck9.whileTrue(moveLiftDown);
+        // Base Sysid
+        testStreamDeck1.whileTrue(moveLiftUp);
+        testStreamDeck2.whileTrue(moveLiftDown);
+        testStreamDeck3.whileTrue(tiltArmManuallyUp);
+        testStreamDeck4.whileTrue(tiltArmManuallyDown);
 
-        //Test Stream Deck:
-            // Base Sysid
-            testStreamDeck1.whileTrue(moveLiftUp);
-            testStreamDeck2.whileTrue(moveLiftDown);
-            testStreamDeck3.whileTrue(tiltArmManuallyUp);
-            testStreamDeck4.whileTrue(tiltArmManuallyDown);
+        // logger
+        testStreamDeck5.onTrue(liftandArmTier3);
+        testStreamDeck10.onTrue(armtopos);
 
-            // logger
-            testStreamDeck5.onTrue(liftandArmTier3);
-            testStreamDeck10.onTrue(armtopos);
+        testStreamDeck6.whileTrue(lift.sysIdQuasistatic(Direction.kForward));
+        testStreamDeck7.whileTrue(lift.sysIdQuasistatic(Direction.kReverse));
+        testStreamDeck8.whileTrue(lift.sysIdDynamic(Direction.kForward));
+        testStreamDeck9.whileTrue(lift.sysIdDynamic(Direction.kReverse));
 
-            testStreamDeck6.whileTrue(lift.sysIdQuasistatic(Direction.kForward));
-            testStreamDeck7.whileTrue(lift.sysIdQuasistatic(Direction.kReverse));
-            testStreamDeck8.whileTrue(lift.sysIdDynamic(Direction.kForward));
-            testStreamDeck9.whileTrue(lift.sysIdDynamic(Direction.kReverse));
+        // Coral Intake Test Controls
+        testStreamDeck11.whileTrue(spinCoralIntakeForward);
+        testStreamDeck12.whileTrue(spinCoralIntakeBackward);
 
-            // Coral Intake Test Controls
-            testStreamDeck11.whileTrue(spinCoralIntakeForward);
-            testStreamDeck12.whileTrue(spinCoralIntakeBackward);
-
-            // Arm Test Controls
-            testStreamDeck13.whileTrue(tiltArmManuallyUp);
-            testStreamDeck14.whileTrue(tiltArmManuallyDown);
+        // Arm Test Controls
+        testStreamDeck13.whileTrue(tiltArmManuallyUp);
+        testStreamDeck14.whileTrue(tiltArmManuallyDown);
 
         // Starts Telemetry
         drivetrain.registerTelemetry(logger::telemeterize);
@@ -356,7 +365,7 @@ public class RobotContainer {
         final double Y = logitech.getRawAxis(KRightYAxis);
         SmartDashboard.putNumber("getLogiRightYAxis", -Y);
         if (Y > KDeadZone || Y < -KDeadZone)
-            return -Y * arm.getSwerveMaxSpeed();
+            return -Y;
         else
             return 0;
     }
@@ -365,7 +374,7 @@ public class RobotContainer {
         final double Y = logitech.getY();
         SmartDashboard.putNumber("getLogiLeftYAxis", -Y);
         if (Y > KDeadZone || Y < -KDeadZone)
-            return -Y * arm.getSwerveMaxSpeed();
+            return -Y;
         else
             return 0;
     }
@@ -374,7 +383,7 @@ public class RobotContainer {
         double X = logitech.getZ();
         SmartDashboard.putNumber("getLogiRightXAxis", -X);
         if (X > KDeadZone || X < -KDeadZone) {
-            return -X * arm.getSwerveMaxSpeed();
+            return -X;
         } else {
             return 0;
         }
@@ -384,7 +393,7 @@ public class RobotContainer {
         double X = logitech.getX();
         SmartDashboard.putNumber("getLogiLeftXAxis", -X);
         if (X > KDeadZone || X < -KDeadZone) {
-            return -X * arm.getSwerveMaxSpeed();
+            return -X;
         } else {
             return 0;
         }

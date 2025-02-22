@@ -346,12 +346,12 @@ public final class Constants {
                 public static final int KArmDeadZone = 1; // in degrees
 
                 public static class ArmPositionConstants {
-                        public static final int KArmPositionStow = 12; // assuming store means not used
+                        public static final int KArmPositionStow = 15; // assuming store means not used
 
-                        public static final int KArmPositionReefL4 = 60;
+                        public static final int KArmPositionReefL4 = 180;
                         public static final int KArmPositionReefL3 = 235;
                         public static final int KArmPositionReefL2 = 235;
-                        public static final int KArmPositionReefL1 = 0; // could be between range 0-10
+                        public static final int KArmPositionReefL1 = 215;// could be between range 0-10
 
                         public static final int KArmPositionIntakeCoralStation = 12; // sloped tunnel is 55°
                         public static final int KArmPositionIntakeGround = 0; // Unknown
@@ -361,7 +361,7 @@ public final class Constants {
         public static class LiftConstants {
 
                 public static final double KLiftStopVelocity = 0;
-                public static final double KLiftMoveVelocity = 0.4;
+                public static final double KLiftMoveVelocity = 0.35;
 
                 public static final int KMaxVoltage = 12; // in rps
                 public static final int KMaxAcceleration = 60; // in rps/s
@@ -374,10 +374,10 @@ public final class Constants {
                         public static final int KLiftControlI = 0;
                         public static final int KLiftControlD = 0;
                         public static final int KLiftMaxVoltage = 12; // in rps
-                        public static final double KLiftPositionReefL4 = 0;
+                        public static final double KLiftPositionReefL4 = 5.5;
                         public static final double KLiftPositionReefL3 = 4.5;
                         public static final double KLiftPositionReefL2 = 2.5;
-                        public static final double KLiftPositionReefL1 = 0; // could be between range 0-10
+                        public static final double KLiftPositionReefL1 = 0.35;// could be between range 0-10
 
                         public static final int KLiftPositionIntakeGround = 340;
                         public static final int KLiftPositionIntakeCoralStation = 55; // sloped tunnel is 55°

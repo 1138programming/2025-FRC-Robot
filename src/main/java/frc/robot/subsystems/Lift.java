@@ -53,9 +53,9 @@ public class Lift extends SubsystemBase {
     private PositionVoltage m_request;
     // in init function, set slot 0 gains
 
-    private PositionVoltage m_PositionVoltage;
+    private PositionVoltage positionVoltageController;
 
-    private TrapezoidProfile m_TrapezoidProfile;
+    private TrapezoidProfile liftTrapezoidProfile;
 
     private TrapezoidProfile.State m_goal;
     private TrapezoidProfile.State m_setpoint;
@@ -70,41 +70,45 @@ public class Lift extends SubsystemBase {
                     // Log state with SignalLogger class
                     state -> SignalLogger.writeString("SysIdLift_State", state.toString())),
             new SysIdRoutine.Mechanism(
-                    volts -> setMotorVoltage(volts),
+                    volts -> setLiftElevatorVoltage(volts),
                     null,
                     this));
 
     public Lift() {
-        // CANCoder
+        // Devices
+        liftMotor = new TalonFX(KLiftMotorID);
         liftCANCoder = new CANcoder(KLiftCANCoderID);
-        canCoderConfig = new CANcoderConfiguration();
-
         toplimitSwitch = new DigitalInput(KLiftTopLimitSwitch);
         bottomlimitSwitch = new DigitalInput(KLiftBottomLImitSwitch);
 
-        // canCoderConfig.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
+        //Cancoder Config
+        canCoderConfig = new CANcoderConfiguration();
+
         canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
         canCoderConfig.MagnetSensor.MagnetOffset = -1.87;
+
         liftCANCoder.getConfigurator().apply(canCoderConfig);
 
-        // Motor
-        liftMotor = new TalonFX(KLiftMotorID);
 
+        //Lift Motor Config
         liftMotorConfig = new TalonFXConfiguration();
+
         liftMotorConfig.Feedback.FeedbackRemoteSensorID = liftCANCoder.getDeviceID();
         liftMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         liftMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
         liftMotorConfig.Feedback.RotorToSensorRatio = 46.67;
         liftMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
+        
         liftMotor.getConfigurator().apply(liftMotorConfig);
 
-        m_PositionVoltage = new PositionVoltage(0).withEnableFOC(true);
-        m_TrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(KMaxVoltage, KMaxAcceleration));
+
+        positionVoltageController = new PositionVoltage(0).withEnableFOC(true);
+
+        liftTrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(KMaxVoltage, KMaxAcceleration));
 
         voltageController = new VoltageOut(0).withEnableFOC(false);
 
-        // pid config
+        // Lift Controller Configuration 
         var slot0Configs = new Slot0Configs()
                 .withKP(8).withKI(0).withKD(0)
                 .withKS(3.2186).withKV(1.6689).withKA(0).withKG(0.34152)
@@ -112,20 +116,16 @@ public class Lift extends SubsystemBase {
 
         liftMotor.getConfigurator().apply(slot0Configs);
 
-        m_request = new PositionVoltage(0).withSlot(0);
-
-        startingAngle = 0;
-
         m_goal = new TrapezoidProfile.State(0, 0);
 
         m_setpoint = new TrapezoidProfile.State();
     }
 
-    public void setMotorVoltage(Voltage volts) {
+    public void setLiftElevatorVoltage(Voltage volts) {
         liftMotor.setControl(voltageController.withOutput(volts));
     }
 
-    public void setMotorSpeed(double speed) {
+    public void setLiftElevatorSpeed(double speed) {
         if (speed > 0) {
             if (!toplimitSwitch.get()) {
                 liftMotor.set(0);
@@ -141,39 +141,28 @@ public class Lift extends SubsystemBase {
         }
     }
 
-    public void stopLift() {
+    public void liftStop() {
         liftMotor.set(0);
     }
 
     public void MoveLiftToSetPositionCTRE(double position) {
-        // Should call setArmPosition encorperating steamdeck button values to
-        // correspond to set point
-        // Should call setArmPosition encorperating steamdeck button values to
-        // correspond to set points
+
         m_goal = new TrapezoidProfile.State(position, 0); // new goal position
-        m_setpoint = m_TrapezoidProfile.calculate(0.020, m_setpoint, m_goal); // calculates the new setpoint based on
-                                                                              // the new goal
+        m_setpoint = liftTrapezoidProfile.calculate(0.020, m_setpoint, m_goal); // calculates the new setpoint based on the new goal
 
-        m_PositionVoltage.Position = m_setpoint.position;
-        m_PositionVoltage.Velocity = m_setpoint.velocity;
+        positionVoltageController.Position = m_setpoint.position;
+        positionVoltageController.Velocity = m_setpoint.velocity;
+        //Checks for manual Control
         if (!manualControl) {
-            liftMotor.setControl(m_PositionVoltage);
-        }
-    }
-
-    // PID
-    public void MoveLiftToSetPositionWPI(double setpoint) {
-        if (!manualControl) {
-            liftMotor.setControl(m_request.withPosition(setpoint));
+            liftMotor.setControl(positionVoltageController);
         }
     }
 
     public double getLiftCANCoder() {
-        double angle = liftCANCoder.getPosition().getValueAsDouble() * 360;
-        return angle;
+        return liftCANCoder.getPosition().getValueAsDouble() * 360;
     }
 
-    public void setManualControl() {
+    public void setLiftManualControl() {
         manualControl = !manualControl;
     }
 

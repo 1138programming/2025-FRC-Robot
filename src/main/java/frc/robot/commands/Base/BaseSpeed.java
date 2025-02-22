@@ -5,26 +5,23 @@
 package frc.robot.commands.Base;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.SubsystemUtil;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class BaseSpeed extends Command {
-  private Arm arm;
+  private SubsystemUtil subsystemUtil;
   private double speed;
   /** Creates a new BaseTurbo. */
-  public BaseSpeed(Arm arm, double speed) {
-    this.arm = arm;
+  public BaseSpeed(SubsystemUtil subsystemUtil, double speed) {
+    this.subsystemUtil = subsystemUtil;
     this.speed = speed;
-    addRequirements(arm);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.setSwerveMaxSpeed(speed);
+    subsystemUtil.setSwerveMaxSpeed(speed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

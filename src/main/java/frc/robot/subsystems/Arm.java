@@ -49,17 +49,17 @@ public class Arm extends SubsystemBase {
 
     private Slot0Configs Slot0Configs;
 
-    private PIDController armPid;
+    private PIDController armPidController;
 
     private ArmFeedforward armFeedforward;
 
-    private DigitalInput limitSwitch;
+    private DigitalInput bottomLimitSwitch;
 
     private VoltageOut voltageController;
 
-    final private PositionVoltage m_PositionVoltage;
+    final private PositionVoltage positionVoltageController;
 
-    final private DutyCycleOut m_PositionDutyCycle;
+    final private DutyCycleOut positionDutyCycleController;
 
     final private TrapezoidProfile m_TrapezoidProfile; // used for motion profiling
 
@@ -70,7 +70,7 @@ public class Arm extends SubsystemBase {
 
     private DutyCycleEncoder tiltThroughBoreEncoder;
 
-    private boolean manualControl;
+    private boolean armManualControl;
 
     private final SysIdRoutine m_sysIdRoutineArm = new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -98,11 +98,11 @@ public class Arm extends SubsystemBase {
         motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         // WPI Pid
-        armPid = new PIDController(0.018, KArmControlI, 0.00);
+        armPidController = new PIDController(0.018, KArmControlI, 0.0001);
 
         armFeedforward = new ArmFeedforward(0, 0, 0, 0);
 
-        m_PositionDutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+        positionDutyCycleController = new DutyCycleOut(0).withEnableFOC(true);
 
         // CTRE pid
         Slot0Configs = new Slot0Configs();
@@ -113,7 +113,7 @@ public class Arm extends SubsystemBase {
         Slot0Configs.kI = KArmControlI;
         Slot0Configs.kD = KArmControlD;
 
-        m_PositionVoltage = new PositionVoltage(0).withEnableFOC(true);
+        positionVoltageController = new PositionVoltage(0).withEnableFOC(true);
         m_TrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(KMaxVoltage, KMaxAcceleration));
         // set first goal to stored position of arm, will change later upon use input
 
@@ -128,9 +128,11 @@ public class Arm extends SubsystemBase {
 
         tiltMotor.setNeutralMode(NeutralModeValue.Brake); // set the motor to brake mode so arm is precise
 
-        manualControl = false;
+        armManualControl = false;
 
-        limitSwitch = new DigitalInput(KArmLimitSwitch);
+        bottomLimitSwitch = new DigitalInput(KArmLimitSwitch);
+
+        speedModifier = 0.6;
 
     }
 
@@ -164,25 +166,30 @@ public class Arm extends SubsystemBase {
         m_setpoint = m_TrapezoidProfile.calculate(0.020, m_setpoint, m_goal); // calculates the new setpoint based on
         // the new goal
 
-        m_PositionVoltage.Position = m_setpoint.position;
-        m_PositionVoltage.Velocity = m_setpoint.velocity;
-        tiltMotor.setControl(m_PositionVoltage);
+        positionVoltageController.Position = m_setpoint.position;
+        positionVoltageController.Velocity = m_setpoint.velocity;
+        tiltMotor.setControl(positionVoltageController);
     }
 
     public void tiltArmToSetPositionWPI(double position) {
-        if (!manualControl) {
-            if (armPid.calculate(tiltThroughBoreEncoder.get(), position) < 0 && limitSwitch.get()) {
-                tiltMotor.setControl(m_PositionDutyCycle.withOutput(
-                        0));
-            } else {
-                tiltMotor.setControl(m_PositionDutyCycle.withOutput(
-                        armPid.calculate(tiltThroughBoreEncoder.get(), position)));
-            }
+        // if (!armManualControl) {
+        // if (armPidController.calculate(tiltThroughBoreEncoder.get(), position) < 0 &&
+        // bottomLimitSwitch.get()) {
+        // tiltMotor.setControl(positionDutyCycleController.withOutput(
+        // 0));
+        // } else {
+        // tiltMotor.setControl(positionDutyCycleController.withOutput(
+        // armPidController.calculate(tiltThroughBoreEncoder.get(), position)));
+        // }
+        // }
+        if (!armManualControl) {
+            tiltMotor.setControl(positionDutyCycleController.withOutput(
+                    armPidController.calculate(tiltThroughBoreEncoder.get(), position)));
         }
     }
 
     public void setManualControl() {
-        manualControl = !manualControl;
+        armManualControl = !armManualControl;
     }
 
     public boolean isAtSetPosition() {
@@ -226,6 +233,6 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Arm Cancoder", getTiltEncoder());
-        SmartDashboard.putBoolean("Arm Manual", manualControl);
+        SmartDashboard.putBoolean("Arm Manual", armManualControl);
     }
 }

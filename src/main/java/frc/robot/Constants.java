@@ -325,6 +325,14 @@ public final class Constants {
                 public static final PIDController KBaseController = new PIDController(KlimeLightDriveP,
                                 KlimeLightDriveI,
                                 KlimeLightDriveD);
+
+                public static final double[] KAprilTagsYPos = {
+
+                };
+                public static final double[] KAprilTagsXPos = {
+
+                };
+
         }
 
         public static class ArmConstants {

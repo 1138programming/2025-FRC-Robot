@@ -23,6 +23,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,6 +60,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
         /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
         private Limelight limelight;
+        private Pose2d pose;
         private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
             new SysIdRoutine.Config(
                 null,        // Use default ramp rate (1 V/s)
@@ -139,6 +141,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 startSimThread();
             }
             configureAutoBuilder();
+            limelight = new Limelight();
+
         }
     
         /**
@@ -165,6 +169,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 startSimThread();
             }
             configureAutoBuilder();
+            limelight = new Limelight();
+
         }
     
           
@@ -199,6 +205,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 startSimThread();
             }
             configureAutoBuilder();
+           pose  = getState().Pose;
+           this.limelight = new Limelight();
+
         }
     
          private void configureAutoBuilder() {
@@ -284,8 +293,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
              
                 });
             }
+            SmartDashboard.putString("bostpos", limelight.getbostpose().toString());
+
 
         }
+
+        public double getDistanceFromTag(int tagNumber) {
+           
+            return  pose.getX();
+        }
+
+    
     
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();
@@ -300,7 +318,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
-        limelight = new Limelight();
         
 
     }

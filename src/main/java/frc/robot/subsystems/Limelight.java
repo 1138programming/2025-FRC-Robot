@@ -52,6 +52,8 @@ public class Limelight extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // SmartDashboard.putNumberArray("botpose", botpose);
+    botpose = LimelightOneTable.getEntry("botpose_wpiblue").getDoubleArray(new double[11]);
+
 
   }
 }

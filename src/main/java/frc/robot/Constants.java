@@ -30,6 +30,7 @@ public final class Constants {
                 public static final int KTiltArmId = 9;
                 public static final int KLiftMotorID = 10;
                 public static final int KCoralIntakeMotorId = 11;
+                public static final int KHangMotorId = 12;
 
                 // Cancoder
                 // IDS 1-4 For Swerve
@@ -38,11 +39,11 @@ public final class Constants {
                 // PWM
 
                 // DIO
-                public static final int KArmLimitSwitch = 4;
-                public static final int KCoralIntakeMotorLimitSwitch = 3;
-                public static final int KTiltThroughEncoderId = 2;
-                public static final int KLiftTopLimitSwitch = 1;
                 public static final int KLiftBottomLImitSwitch = 0;
+                public static final int KLiftTopLimitSwitch = 1;
+                public static final int KTiltThroughEncoderId = 2;
+                public static final int KCoralIntakeMotorLimitSwitch = 3;
+                public static final int KArmLimitSwitch = 4;
         }
 
         public static class TunerConstants {
@@ -52,7 +53,7 @@ public final class Constants {
                 // the
                 // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
                 private static final Slot0Configs steerGains = new Slot0Configs()
-                                .withKP(100).withKI(0).withKD(0.4)
+                                .withKP(80).withKI(0).withKD(0.4)
                                 .withKS(0.1).withKV(2.33).withKA(0)
                                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
                 // When using closed-loop control, the drive motor uses the control
@@ -86,7 +87,11 @@ public final class Constants {
                 // cannot be null.
                 // Some configs will be overwritten; check the `with*InitialConfigs()` API
                 // documentation.
-                private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
+                private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration()
+                                .withCurrentLimits(
+                                                new CurrentLimitsConfigs()
+                                                                .withSupplyCurrentLimit(60)
+                                                                .withSupplyCurrentLimitEnable(true));
                 private static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration()
                                 .withCurrentLimits(
                                                 new CurrentLimitsConfigs()
@@ -95,7 +100,9 @@ public final class Constants {
                                                                 // relatively low
                                                                 // stator current limit to help avoid brownouts without
                                                                 // impacting performance.
-                                                                .withStatorCurrentLimit(Amps.of(60))
+                                                                .withStatorCurrentLimit(Amps.of(40))
+                                                                .withSupplyCurrentLimit(60)
+                                                                .withSupplyCurrentLimitEnable(true)
                                                                 .withStatorCurrentLimitEnable(true));
                 private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
                 // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
@@ -329,7 +336,7 @@ public final class Constants {
 
         public static class ArmConstants {
                 public static final int KTiltThroughEncoderFullRotationValue = 360; // Troughbore
-                public static final double KTiltThroughEncoderZeroPosition = -39.5; // Throughbore -> check complete
+                public static final double KTiltThroughEncoderZeroPosition = -36; // Throughbore -> check complete
                                                                                     // offset
                                                                                     // in
                                                                                     // future
@@ -346,14 +353,14 @@ public final class Constants {
                 public static final int KArmDeadZone = 1; // in degrees
 
                 public static class ArmPositionConstants {
-                        public static final int KArmPositionStow = 15; // assuming store means not used
+                        public static final int KArmPositionStow = 230; // assuming store means not used
 
-                        public static final int KArmPositionReefL4 = 180;
+                        public static final int KArmPositionReefL4 = 0;
                         public static final int KArmPositionReefL3 = 235;
-                        public static final int KArmPositionReefL2 = 235;
-                        public static final int KArmPositionReefL1 = 215;// could be between range 0-10
+                        public static final int KArmPositionReefL2 = 240;
+                        public static final int KArmPositionReefL1 = 200;// could be between range 0-10
 
-                        public static final int KArmPositionIntakeCoralStation = 12; // sloped tunnel is 55°
+                        public static final int KArmPositionIntakeCoralStation = 25; // sloped tunnel is 55°
                         public static final int KArmPositionIntakeGround = 0; // Unknown
                 }
         }
@@ -374,9 +381,9 @@ public final class Constants {
                         public static final int KLiftControlI = 0;
                         public static final int KLiftControlD = 0;
                         public static final int KLiftMaxVoltage = 12; // in rps
-                        public static final double KLiftPositionReefL4 = 5.5;
-                        public static final double KLiftPositionReefL3 = 4.5;
-                        public static final double KLiftPositionReefL2 = 2.5;
+                        public static final double KLiftPositionReefL4 = 5.25;
+                        public static final double KLiftPositionReefL3 = 4.6;
+                        public static final double KLiftPositionReefL2 = 2.65;
                         public static final double KLiftPositionReefL1 = 0.35;// could be between range 0-10
 
                         public static final int KLiftPositionIntakeGround = 340;

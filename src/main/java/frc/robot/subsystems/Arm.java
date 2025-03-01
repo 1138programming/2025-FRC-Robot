@@ -98,7 +98,7 @@ public class Arm extends SubsystemBase {
         motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         // WPI Pid
-        armPidController = new PIDController(0.018, KArmControlI, 0.0001);
+        armPidController = new PIDController(0.02, KArmControlI, 0);
 
         armFeedforward = new ArmFeedforward(0, 0, 0, 0);
 
@@ -155,6 +155,13 @@ public class Arm extends SubsystemBase {
         // m_setpoint = new TrapezoidProfile.State(currentPosition, 0);
     }
 
+    public void armHold() {
+        double pos = tiltThroughBoreEncoder.get();
+        if (armManualControl) {
+            tiltArmToSetPositionWPI(pos);
+        }
+    }
+
     // TODO: make sure arm position does not exceed physical limits of arm / limit
     // switch
     // position should be in rotations
@@ -184,7 +191,7 @@ public class Arm extends SubsystemBase {
         // }
         if (!armManualControl) {
             tiltMotor.setControl(positionDutyCycleController.withOutput(
-                    armPidController.calculate(tiltThroughBoreEncoder.get(), position)));
+                    armPidController.calculate(tiltThroughBoreEncoder.get(), position) * 0.8));
         }
     }
 

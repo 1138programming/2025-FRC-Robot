@@ -85,7 +85,7 @@ public class Lift extends SubsystemBase {
         canCoderConfig = new CANcoderConfiguration();
 
         canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-        canCoderConfig.MagnetSensor.MagnetOffset = -1.87;
+        canCoderConfig.MagnetSensor.MagnetOffset = 0.7;
 
         liftCANCoder.getConfigurator().apply(canCoderConfig);
 
@@ -126,19 +126,20 @@ public class Lift extends SubsystemBase {
     }
 
     public void setLiftElevatorSpeed(double speed) {
-        if (speed > 0) {
-            if (!toplimitSwitch.get()) {
-                liftMotor.set(0);
-            } else {
-                liftMotor.set(speed);
-            }
-        } else {
-            if (!bottomlimitSwitch.get()) {
-                liftMotor.set(0);
-            } else {
-                liftMotor.set(speed);
-            }
-        }
+        // if (speed > 0) {
+        //     if (!toplimitSwitch.get()) {
+        //         liftMotor.set(0);
+        //     } else {
+        //         liftMotor.set(speed);
+        //     }
+        // } else {
+        //     if (!bottomlimitSwitch.get()) {
+        //         liftMotor.set(0);
+        //     } else {
+        //         liftMotor.set(speed);
+        //     }
+        // }
+        liftMotor.set(speed);
     }
 
     public void liftStop() {
@@ -181,6 +182,8 @@ public class Lift extends SubsystemBase {
         SmartDashboard.putBoolean("Lift Bottom", bottomlimitSwitch.get());
         SmartDashboard.putNumber("Lift encoder", liftCANCoder.getPosition().getValueAsDouble());
         SmartDashboard.putBoolean("Lift Manual Control", manualControl);
+        SmartDashboard.putNumber("Lift Control speed", positionVoltageController.Velocity);
+
 
     }
 }

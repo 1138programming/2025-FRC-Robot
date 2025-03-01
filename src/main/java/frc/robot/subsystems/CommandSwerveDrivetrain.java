@@ -293,7 +293,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
              
                 });
             }
-            SmartDashboard.putString("bostpos", limelight.getbostpose().toString());
+            SmartDashboard.putNumber("bostposx", limelight.getbotpose()[0]);
+            SmartDashboard.putNumber("bostposy", limelight.getbotpose()[1]);
+            SmartDashboard.putNumberArray("bostpose", limelight.getbotpose());
+            if (pose != null) {
+                SmartDashboard.putNumberArray("odompose", new double[] {pose.getX(), pose.getY()});
+
+            }
+
+
+
+            addVisionMeasurement(new Pose2d(limelight.getbotpose()[0],limelight.getbotpose()[1], new Rotation2d(limelight.getbotpose()[2])), limelight.getTl());
+
 
 
         }

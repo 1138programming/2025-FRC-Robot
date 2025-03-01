@@ -28,23 +28,56 @@ public class Limelight extends SubsystemBase {
 
   /** Creates a new Limelight. */
   private NetworkTable LimelightOneTable;
-  private NetworkTable LimelightTwoTable;
+  // private NetworkTable LimelightTwoTable;
 
-  private double[] botpose;
+  private double[] botPose;
+
+    private double botPoseX;
+    private double botPoseY;
+    private double botPoseZ;
+    private double roll;
+    private double pitch;
+    private double yaw;
+    private double latency;
+    private double numberOfTargetsSeen;
+    private double tagSpan;
+    private double averageDistance;
+    private double averageArea;
+    private double tl;
+
+
 
   
   public Limelight() {
-    LimelightOneTable = NetworkTableInstance.getDefault().getTable("Limelight_One");
-    LimelightTwoTable = NetworkTableInstance.getDefault().getTable("Limelight_Two");
-    botpose = LimelightOneTable.getEntry("botpose_wpiblue").getDoubleArray(new double[11]);
+    LimelightOneTable = NetworkTableInstance.getDefault().getTable("limelight");
+    
+    // LimelightTwoTable = NetworkTableInstance.getDefault().getTable("Limelight_Two");
+    botPose = LimelightOneTable.getEntry("botpose_wpiblue").getDoubleArray(new double[11]);
+    tl = LimelightOneTable.getEntry("Tl").getDouble(0);
+    if (botPose.length != 0) {
+      botPoseX = botPose[0];
+      botPoseY = botPose[1];
+      botPoseZ = botPose[2];
+      roll = botPose[3];
+      pitch = botPose[4];
+      yaw = botPose[5];
+      latency = botPose[6];
+      numberOfTargetsSeen = botPose[7];
+      tagSpan = botPose[8];
+      averageDistance = botPose[9];
+      averageArea = botPose[10];
+    }
 
 
     
 
   }
 
-  public double[] getbostpose() {
-    return botpose;
+  public double[] getbotpose() {
+    return botPose;
+  }
+  public double getTl() {
+    return tl;
   }
 
 
@@ -52,7 +85,22 @@ public class Limelight extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // SmartDashboard.putNumberArray("botpose", botpose);
-    botpose = LimelightOneTable.getEntry("botpose_wpiblue").getDoubleArray(new double[11]);
+    botPose = LimelightOneTable.getEntry("botpose_wpiblue").getDoubleArray(new double[11]);
+    tl = LimelightOneTable.getEntry("Tl").getDouble(0);
+
+    if (botPose.length != 0) {
+      botPoseX = botPose[0];
+      botPoseY = botPose[1];
+      botPoseZ = botPose[2];
+      roll = botPose[3];
+      pitch = botPose[4];
+      yaw = botPose[5];
+      latency = botPose[6];
+      numberOfTargetsSeen = botPose[7];
+      tagSpan = botPose[8];
+      averageDistance = botPose[9];
+      averageArea = botPose[10];
+    }
 
 
   }

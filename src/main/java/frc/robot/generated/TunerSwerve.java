@@ -7,6 +7,8 @@ import com.ctre.phoenix6.hardware.*;
 import com.ctre.phoenix6.swerve.*;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.Num;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
@@ -20,8 +22,13 @@ public class TunerSwerve {
      * This should only be called once in your robot program,.
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
+        // Matrix<N3, N1> odometryStandardDeviation =   Matrix(,N1, new double[] {0,0,0});
+        // Matrix<N3, N1> visionStandardDeviation  = Matrix(N3,N1, new double[] {0,0,0});
+        // return new CommandSwerveDrivetrain(
+        //     DrivetrainConstants , 0.2, odometryStandardDeviation,visionStandardDeviation, FrontLeft, FrontRight, BackLeft, BackRight
+        // );
         return new CommandSwerveDrivetrain(
-            DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
+           DrivetrainConstants , FrontLeft, FrontRight, BackLeft, BackRight
         );
     }
 

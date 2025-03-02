@@ -22,14 +22,14 @@ public class TunerSwerve {
      * This should only be called once in your robot program,.
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
-        // Matrix<N3, N1> odometryStandardDeviation =   Matrix(,N1, new double[] {0,0,0});
-        // Matrix<N3, N1> visionStandardDeviation  = Matrix(N3,N1, new double[] {0,0,0});
-        // return new CommandSwerveDrivetrain(
-        //     DrivetrainConstants , 0.2, odometryStandardDeviation,visionStandardDeviation, FrontLeft, FrontRight, BackLeft, BackRight
-        // );
+        Matrix<N3, N1> odometryStandardDeviation =   new Matrix(N3.instance, N1.instance, new double[] {0,0,0});
+        Matrix<N3, N1> visionStandardDeviation  = new Matrix(N3.instance , N1.instance, new double[] {0,0,0});
         return new CommandSwerveDrivetrain(
-           DrivetrainConstants , FrontLeft, FrontRight, BackLeft, BackRight
+            DrivetrainConstants , 0.2, odometryStandardDeviation,visionStandardDeviation, FrontLeft, FrontRight, BackLeft, BackRight
         );
+        // return new CommandSwerveDrivetrain(
+        //    DrivetrainConstants , FrontLeft, FrontRight, BackLeft, BackRight
+        // );
     }
 
 

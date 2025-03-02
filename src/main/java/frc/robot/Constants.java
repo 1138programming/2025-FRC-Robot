@@ -44,6 +44,8 @@ public final class Constants {
                 public static final int KTiltThroughEncoderId = 2;
                 public static final int KCoralIntakeMotorLimitSwitch = 3;
                 public static final int KArmLimitSwitch = 4;
+                public static final int KHangLock = 5;
+                public static final int KHangThroughEncoderId = 6;
         }
 
         public static class TunerConstants {
@@ -363,6 +365,11 @@ public final class Constants {
                         public static final int KArmPositionIntakeCoralStation = 25; // sloped tunnel is 55°
                         public static final int KArmPositionIntakeGround = 0; // Unknown
                 }
+        }
+
+        public static class HangConstants {
+                public static final int KHangThroughEncoderFullRotationValue = 360; // Troughbore
+                public static final double KHangThroughEncoderZeroPosition = -36; // Throughbore -> check complete
         }
 
         public static class LiftConstants {

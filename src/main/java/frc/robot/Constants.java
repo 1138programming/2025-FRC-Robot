@@ -29,7 +29,7 @@ public final class Constants {
                 // IDS 1-8 For Swerve
                 public static final int KTiltArmId = 9;
                 public static final int KLiftMotorID = 10;
-                public static final int KCoralIntakeMotorId = 11;
+                public static final int KCoralIntakeMotorId = 13;
                 public static final int KHangMotorId = 12;
 
                 // Cancoder
@@ -167,7 +167,7 @@ public final class Constants {
                 private static final int kFrontLeftDriveMotorId = 2;
                 private static final int kFrontLeftSteerMotorId = 1;
                 private static final int kFrontLeftEncoderId = 1;
-                private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.015625);
+                private static final Angle kFrontLeftEncoderOffset = Rotations.of(0.3088);
                 private static final boolean kFrontLeftSteerMotorInverted = true;
                 private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -178,7 +178,7 @@ public final class Constants {
                 private static final int kFrontRightDriveMotorId = 4;
                 private static final int kFrontRightSteerMotorId = 3;
                 private static final int kFrontRightEncoderId = 2;
-                private static final Angle kFrontRightEncoderOffset = Rotations.of(0.43603515625);
+                private static final Angle kFrontRightEncoderOffset = Rotations.of(-0.1425);
                 private static final boolean kFrontRightSteerMotorInverted = true;
                 private static final boolean kFrontRightEncoderInverted = false;
 
@@ -189,7 +189,7 @@ public final class Constants {
                 private static final int kBackLeftDriveMotorId = 6;
                 private static final int kBackLeftSteerMotorId = 5;
                 private static final int kBackLeftEncoderId = 3;
-                private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.423095703125);
+                private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.2949);
                 private static final boolean kBackLeftSteerMotorInverted = true;
                 private static final boolean kBackLeftEncoderInverted = false;
 
@@ -200,7 +200,7 @@ public final class Constants {
                 private static final int kBackRightDriveMotorId = 8;
                 private static final int kBackRightSteerMotorId = 7;
                 private static final int kBackRightEncoderId = 4;
-                private static final Angle kBackRightEncoderOffset = Rotations.of(0.447265625);
+                private static final Angle kBackRightEncoderOffset = Rotations.of(0.4705);
                 private static final boolean kBackRightSteerMotorInverted = true;
                 private static final boolean kBackRightEncoderInverted = false;
 
@@ -375,11 +375,13 @@ public final class Constants {
 
                 public static class LiftPositionConstants {
                         // Takes about 6 rotations to fully extend
-                        public static final double KLiftPositionStow = 0.3; // assuming store means not used
+                        public static final double KLiftPositionStow = 1.2; // assuming store means not used
+                        // public static final double KLiftPositionStow = 0.3; // assuming store means not used
 
                         public static final int KLiftControlP = 0;
                         public static final int KLiftControlI = 0;
                         public static final int KLiftControlD = 0;
+                        
                         public static final int KLiftMaxVoltage = 12; // in rps
                         public static final double KLiftPositionReefL4 = 5.25;
                         public static final double KLiftPositionReefL3 = 4.6;

@@ -89,13 +89,13 @@ public class Arm extends SubsystemBase {
         tiltMotor = new TalonFX(KTiltArmId);
 
         tiltThroughBoreEncoder = new DutyCycleEncoder(KTiltThroughEncoderId, KTiltThroughEncoderFullRotationValue,
-                KTiltThroughEncoderZeroPosition);
+                0);
         tiltThroughBoreEncoder.setInverted(true);
 
         motorConfig = new TalonFXConfiguration();
         // motorConfig.Feedback.SensorToMechanismRatio = 1.0;
         // motorConfig.Feedback.RotorToSensorRatio = 46.67; //
-        motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // WPI Pid
         armPidController = new PIDController(0.02, KArmControlI, 0);

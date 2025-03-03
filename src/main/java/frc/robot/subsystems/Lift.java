@@ -82,16 +82,15 @@ public class Lift extends SubsystemBase {
         toplimitSwitch = new DigitalInput(KLiftTopLimitSwitch);
         bottomlimitSwitch = new DigitalInput(KLiftBottomLImitSwitch);
 
-        //Cancoder Config
+        // Cancoder Config
         canCoderConfig = new CANcoderConfiguration();
 
         canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        canCoderConfig.MagnetSensor.MagnetOffset = 0.7;
+        canCoderConfig.MagnetSensor.MagnetOffset = 0;
 
         liftCANCoder.getConfigurator().apply(canCoderConfig);
 
-
-        //Lift Motor Config
+        // Lift Motor Config
         liftMotorConfig = new TalonFXConfiguration();
 
         liftMotorConfig.Feedback.FeedbackRemoteSensorID = liftCANCoder.getDeviceID();
@@ -99,9 +98,8 @@ public class Lift extends SubsystemBase {
         liftMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
         liftMotorConfig.Feedback.RotorToSensorRatio = 46.67;
         liftMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        
-        liftMotor.getConfigurator().apply(liftMotorConfig);
 
+        liftMotor.getConfigurator().apply(liftMotorConfig);
 
         positionVoltageController = new PositionVoltage(0).withSlot(0);
 
@@ -109,12 +107,12 @@ public class Lift extends SubsystemBase {
 
         voltageController = new VoltageOut(0);
 
-        // Lift Controller Configuration 
+        // Lift Controller Configuration
         var slot0Configs = new Slot0Configs()
                 .withKP(6.4238).withKI(0).withKD(0)
-                .withKS(0.29752).withKV(4.4829).withKA(1.1514).withKG(0.25628).withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
-                
-                
+                .withKS(0.29752).withKV(4.4829).withKA(1.1514).withKG(0.25628)
+                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
+
         liftMotor.getConfigurator().apply(slot0Configs);
 
         // m_goal = new TrapezoidProfile.State(0, 0);
@@ -137,7 +135,8 @@ public class Lift extends SubsystemBase {
     public void MoveLiftToSetPositionCTRE(double position) {
 
         TrapezoidProfile.State m_goal = new TrapezoidProfile.State(position, 0); // new goal position
-        TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State(); // calculates the new setpoint based on the new goal
+        TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State(); // calculates the new setpoint based on the
+                                                                          // new goal
 
         final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
@@ -145,7 +144,7 @@ public class Lift extends SubsystemBase {
 
         m_request.Position = m_setpoint.position;
         m_request.Velocity = m_setpoint.velocity;
-        //Checks for manual Control
+        // Checks for manual Control
         liftMotor.setControl(m_request);
 
         SmartDashboard.putNumber("Lift Control speed", m_request.Velocity);
@@ -175,7 +174,6 @@ public class Lift extends SubsystemBase {
         SmartDashboard.putBoolean("Lift Bottom", bottomlimitSwitch.get());
         SmartDashboard.putNumber("Lift encoder", liftCANCoder.getPosition().getValueAsDouble());
         SmartDashboard.putBoolean("Lift Manual Control", manualControl);
-
 
     }
 }

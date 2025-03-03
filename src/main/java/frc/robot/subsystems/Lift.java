@@ -101,7 +101,7 @@ public class Lift extends SubsystemBase {
 
         liftMotor.getConfigurator().apply(liftMotorConfig);
 
-        positionVoltageController = new PositionVoltage(0).withSlot(0);
+        positionVoltageController = new PositionVoltage(0).withEnableFOC(true);
 
         m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(KMaxVoltage, KMaxAcceleration));
 
@@ -115,9 +115,9 @@ public class Lift extends SubsystemBase {
 
         liftMotor.getConfigurator().apply(slot0Configs);
 
-        // m_goal = new TrapezoidProfile.State(0, 0);
+        m_goal = new TrapezoidProfile.State(0, 0);
 
-        // m_setpoint = new TrapezoidProfile.State();
+        m_setpoint = new TrapezoidProfile.State();
     }
 
     public void setLiftElevatorVoltage(Voltage volts) {
@@ -134,21 +134,21 @@ public class Lift extends SubsystemBase {
 
     public void MoveLiftToSetPositionCTRE(double position) {
 
-        TrapezoidProfile.State m_goal = new TrapezoidProfile.State(position, 0); // new goal position
-        TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State(); // calculates the new setpoint based on the
-                                                                          // new goal
-
-        final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
-
+        m_goal = new TrapezoidProfile.State(position, 0); // new goal position
         m_setpoint = m_profile.calculate(0.020, m_setpoint, m_goal);
 
-        m_request.Position = m_setpoint.position;
-        m_request.Velocity = m_setpoint.velocity;
-        // Checks for manual Control
-        liftMotor.setControl(m_request);
+      
 
-        SmartDashboard.putNumber("Lift Control speed", m_request.Velocity);
-        SmartDashboard.putNumber("Lift Control pos", m_request.Position);
+        positionVoltageController.Position = m_setpoint.position;
+        positionVoltageController.Velocity = m_setpoint.velocity;
+        if(!manualControl) {
+            liftMotor.setControl(positionVoltageController);
+        }
+        // Checks for manual Control
+       
+
+        // SmartDashboard.putNumber("Lift Control speed", m_request.Velocity);
+        // SmartDashboard.putNumber("Lift Control pos", m_request.Position);
     }
 
     public double getLiftCANCoder() {

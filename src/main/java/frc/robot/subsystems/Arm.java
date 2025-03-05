@@ -72,25 +72,25 @@ public class Arm extends SubsystemBase {
 
     private boolean armManualControl;
 
-    private final SysIdRoutine m_sysIdRoutineArm = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    null, // Use default ramp rate (1 V/s)
-                    Volts.of(5), // Use dynamic voltage of 7 V
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdArm_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    volts -> setMotorVoltage(volts),
-                    null,
-                    this));
+    // private final SysIdRoutine m_sysIdRoutineArm = new SysIdRoutine(
+    //         new SysIdRoutine.Config(
+    //                 null, // Use default ramp rate (1 V/s)
+    //                 Volts.of(5), // Use dynamic voltage of 7 V
+    //                 null, // Use default timeout (10 s)
+    //                 // Log state with SignalLogger class
+    //                 state -> SignalLogger.writeString("SysIdArm_State", state.toString())),
+    //         new SysIdRoutine.Mechanism(
+    //                 volts -> setMotorVoltage(volts),
+    //                 null,
+    //                 this));
 
     public Arm() {
 
         tiltMotor = new TalonFX(KTiltArmId);
 
         tiltThroughBoreEncoder = new DutyCycleEncoder(KTiltThroughEncoderId, KTiltThroughEncoderFullRotationValue,
-                0);
-        tiltThroughBoreEncoder.setInverted(true);
+                315);
+        tiltThroughBoreEncoder.setInverted(false);
 
         motorConfig = new TalonFXConfiguration();
         // motorConfig.Feedback.SensorToMechanismRatio = 1.0;
@@ -191,7 +191,7 @@ public class Arm extends SubsystemBase {
         // }
         if (!armManualControl) {
             tiltMotor.setControl(positionDutyCycleController.withOutput(
-                    armPidController.calculate(tiltThroughBoreEncoder.get(), position) * 0.8));
+                    armPidController.calculate(tiltThroughBoreEncoder.get(), position) * KArmFlipVelocity));
         }
     }
 
@@ -220,18 +220,23 @@ public class Arm extends SubsystemBase {
     public double getTiltEncoder() {
         return tiltThroughBoreEncoder.get();
     }
+    
+    public double getArmSpeed() { 
+        return tiltMotor.getRotorVelocity().getValueAsDouble();
+    }
 
     public void setMotorVoltage(Voltage volts) {
         tiltMotor.setControl(voltageController.withOutput(volts));
     }
 
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineArm.quasistatic(direction);
-    }
+    
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return m_sysIdRoutineArm.quasistatic(direction);
+    // }
 
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineArm.dynamic(direction);
-    }
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return m_sysIdRoutineArm.dynamic(direction);
+    // }
 
     public void stop() {
         tiltMotor.set(0);
@@ -240,6 +245,8 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Arm Cancoder", getTiltEncoder());
+        
         SmartDashboard.putBoolean("Arm Manual", armManualControl);
+        SmartDashboard.putNumber("Arm speed", getArmSpeed());
     }
 }

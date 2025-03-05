@@ -5,18 +5,18 @@
 package frc.robot.commands.Coral;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Arm;
+import frc.robot.SubsystemUtil;
 import frc.robot.subsystems.CoralIntake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class SpinCoralIntake extends Command {
+public class CoralDefault extends Command {
   private final CoralIntake coralIntake;
-  private Arm arm;
-  private double speed;
+  private SubsystemUtil util;
   /** Creates a new SpinCoralIntake. */
-  public SpinCoralIntake(CoralIntake coralIntake, double speed) {
+  public CoralDefault(CoralIntake coralIntake, SubsystemUtil util) {
     this.coralIntake = coralIntake;
-    this.speed = speed;
+    this.util = util;
+  
     addRequirements(coralIntake);
   }
 
@@ -27,7 +27,12 @@ public class SpinCoralIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    coralIntake.setCoralIntakeSpeed(speed);
+      if (util.getArmSpeed() > 10 || util.getArmSpeed() < -10) { 
+          coralIntake.setCoralIntakeSpeed(0.7);
+        }
+        else {
+          coralIntake.setCoralIntakeSpeed(0);
+        }
   }
 
   // Called once the command ends or is interrupted.

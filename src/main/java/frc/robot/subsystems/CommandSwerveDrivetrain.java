@@ -118,7 +118,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         );
     
         /* The SysId routine to test */
-        private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
+        private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
     
         /**
          * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -216,9 +216,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     ),
                     new PPHolonomicDriveController(
                         // PID constants for translation
-                        new PIDConstants(10, 0, 0),
+                        new PIDConstants(30.24925, 0, 0.896635),
                         // PID constants for rotation
-                        new PIDConstants(7, 0, 0)
+                        new PIDConstants(0.8, 0, 0)
                     ),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case

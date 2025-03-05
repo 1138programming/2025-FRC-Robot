@@ -55,14 +55,15 @@ public final class Constants {
                 // the
                 // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
                 private static final Slot0Configs steerGains = new Slot0Configs()
-                                .withKP(80).withKI(0).withKD(0.4)
-                                .withKS(0.1).withKV(2.33).withKA(0)
+                                .withKP(43.0325).withKI(0).withKD(2.189925)
+                                .withKS(0.5124675).withKV(1.89445).withKA(0.06765)
                                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
                 // When using closed-loop control, the drive motor uses the control
                 // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
                 private static final Slot0Configs driveGains = new Slot0Configs()
-                                .withKP(0.089).withKI(0).withKD(0)
-                                .withKS(0.18725).withKV(0.122);
+                                .withKP(0.1499125).withKI(0).withKD(0)
+                                .withKS(0.185485).withKV(0.124475).withKA(0.01575)
+                                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
                 // The closed-loop output type to use for the steer motors;
                 // This affects the PID/FF gains for the steer motors
@@ -261,9 +262,9 @@ public final class Constants {
                                                                                                              // deadband
                                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-                public static final double KBaseTurboMode = 1.0;
-                public static final double KBaseNormalMode = 0.6;
-                public static final double KBaseSlowMode = 0.3;
+                public static final double KBaseTurboMode = 0.8;
+                public static final double KBaseNormalMode = 0.35;
+                public static final double KBaseSlowMode = 0.1;
 
         }
 
@@ -345,6 +346,7 @@ public final class Constants {
 
                 public static final double KArmStopVelocity = 0;
                 public static final double KArmMoveVelocity = 0.4;
+                public static final double KArmFlipVelocity = 0.5;
 
                 public static final int KArmControlP = 0;
                 public static final int KArmControlI = 0;
@@ -357,8 +359,8 @@ public final class Constants {
                 public static class ArmPositionConstants {
                         public static final int KArmPositionStow = 230; // assuming store means not used
 
-                        public static final int KArmPositionReefL4 = 0;
-                        public static final int KArmPositionReefL3 = 235;
+                        public static final int KArmPositionReefL4 = 210;
+                        public static final int KArmPositionReefL3 = 240;
                         public static final int KArmPositionReefL2 = 240;
                         public static final int KArmPositionReefL1 = 200;// could be between range 0-10
 
@@ -382,7 +384,7 @@ public final class Constants {
 
                 public static class LiftPositionConstants {
                         // Takes about 6 rotations to fully extend
-                        public static final double KLiftPositionStow = 1.2; // assuming store means not used
+                        public static final double KLiftPositionStow = 0.3; // assuming store means not used 
                         // public static final double KLiftPositionStow = 0.3; // assuming store means not used
 
                         public static final int KLiftControlP = 0;
@@ -390,13 +392,13 @@ public final class Constants {
                         public static final int KLiftControlD = 0;
                         
                         public static final int KLiftMaxVoltage = 12; // in rps
-                        public static final double KLiftPositionReefL4 = 5.25;
-                        public static final double KLiftPositionReefL3 = 4.6;
-                        public static final double KLiftPositionReefL2 = 2.65;
-                        public static final double KLiftPositionReefL1 = 0.35;// could be between range 0-10
+                        public static final double KLiftPositionReefL4 = 5.7;
+                        public static final double KLiftPositionReefL3 = 4 + 0.1;
+                        public static final double KLiftPositionReefL2 = 1.75 + 0.1;
+                        public static final double KLiftPositionReefL1 = 0;// could be between range 0-10
 
-                        public static final int KLiftPositionIntakeGround = 340;
-                        public static final int KLiftPositionIntakeCoralStation = 55; // sloped tunnel is 55°
+                        // public static final int KLiftPositionIntakeGround = 340;
+                        // public static final int KLiftPositionIntakeCoralStation = 55; // sloped tunnel is 55°
                 }
 
         }

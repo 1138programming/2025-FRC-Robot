@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.Util;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.util.sendable.Sendable;
@@ -20,11 +21,13 @@ import frc.robot.CommandGroups.LiftSetpoints.LiftandArmTier1;
 import frc.robot.CommandGroups.LiftSetpoints.LiftandArmTier2;
 import frc.robot.CommandGroups.LiftSetpoints.LiftandArmTier3;
 import frc.robot.CommandGroups.LiftSetpoints.LiftandArmTier4;
+import frc.robot.commands.Arm.MoveArmStow;
 import frc.robot.commands.Arm.SetArmManualMode;
 import frc.robot.commands.Arm.TiltArmManually;
 import frc.robot.commands.Arm.TiltArmToSetPosition;
 import frc.robot.commands.Base.BaseSpeed;
 import frc.robot.commands.Base.DriveWithJoysticks;
+import frc.robot.commands.Coral.CoralDefault;
 import frc.robot.commands.Coral.SpinCoralIntake;
 import frc.robot.commands.Lift.MoveLift;
 import frc.robot.commands.Lift.MoveLiftToPos;
@@ -36,6 +39,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Lift;
 import frc.robot.util.Telemetry;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import static frc.robot.Constants.TunerConstants.*;
 import static frc.robot.Constants.ArmConstants.*;
@@ -72,11 +76,12 @@ public class RobotContainer {
     public final TiltArmManually armStop;
     public final TiltArmManually tiltArmManuallyUp;
     public final TiltArmManually tiltArmManuallyDown;
-    public final TiltArmToSetPosition armStow;
+    public final MoveArmStow armStow;
     public final TiltArmToSetPosition armtopos;
     public final SetArmManualMode setArmManualMode;
 
     public final SpinCoralIntake stopCoralIntake;
+    public final CoralDefault coralDefault;
     public final SpinCoralIntake spinCoralIntakeForward;
     public final SpinCoralIntake spinCoralIntakeBackward;
 
@@ -128,7 +133,7 @@ public class RobotContainer {
         arm = new Arm();
         lift = new Lift();
         coralIntake = new CoralIntake();
-        subsystemUtil = new SubsystemUtil();
+        subsystemUtil = new SubsystemUtil(arm);
 
         // Commands
         driveWithJoysticks = new DriveWithJoysticks(drivetrain);
@@ -149,11 +154,13 @@ public class RobotContainer {
         armStop = new TiltArmManually(arm, KArmStopVelocity);
         tiltArmManuallyUp = new TiltArmManually(arm, KArmMoveVelocity);
         tiltArmManuallyDown = new TiltArmManually(arm, -KArmMoveVelocity);
-        armStow = new TiltArmToSetPosition(arm, KArmPositionStow);
         armtopos = new TiltArmToSetPosition(arm, 50);
         setArmManualMode = new SetArmManualMode(arm);
+        armStow = new MoveArmStow(arm, KArmPositionStow);
 
         stopCoralIntake = new SpinCoralIntake(coralIntake, 0);
+        coralDefault = new CoralDefault(coralIntake, subsystemUtil);
+
         spinCoralIntakeForward = new SpinCoralIntake(coralIntake, KCoralIntakeSpeed);
         spinCoralIntakeBackward = new SpinCoralIntake(coralIntake, -KCoralIntakeSpeed);
 
@@ -164,75 +171,61 @@ public class RobotContainer {
         liftandArmTier1 = new LiftandArmTier1(arm, lift);
         liftandArmIntake = new LiftandArmIntake(arm, lift);
 
-        // SmartDashboard.putData("Swerve Drive", new Sendable() {
-        //     @Override
-        //     public void initSendable(SendableBuilder builder) {
-        //         builder.setSmartDashboardType("SwerveDrive");
+        //Named Commands (for Pathplanner)
+        NamedCommands.registerCommand("liftandArmTier4", liftandArmTier4);
+        NamedCommands.registerCommand("liftandArmTier3", liftandArmTier3);
+        NamedCommands.registerCommand("liftandArmTier2", liftandArmTier2);
+        NamedCommands.registerCommand("liftandArmTier1", liftandArmTier1);
+        NamedCommands.registerCommand("spinCoralIntakeBackward", spinCoralIntakeBackward);
 
-        //         // Swerve 1
-        //         builder.addDoubleProperty("Back Right Angle",
-        //                 () -> drivetrain.getModule(0).getCurrentState().angle.getDegrees(),
-        //                 null);
-        //         builder.addDoubleProperty("Back Right Velocity", () -> drivetrain.getModule(0).getDriveMotor().get(),
-        //                 null);
-        //         builder.addDoubleProperty("Front Left Velocity",
-        //                 () -> drivetrain.getModule(0).getCurrentState().speedMetersPerSecond,
-        //                 null);
+        SmartDashboard.putData("Swerve Drive", new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.setSmartDashboardType("SwerveDrive");
 
-        //         // Swerve 2
-        //         builder.addDoubleProperty("Front Left Angle",
-        //                 () -> drivetrain.getModule(1).getCurrentState().angle.getDegrees(),
-        //                 null);
-        //         // builder.addDoubleProperty("Front Left Velocity", () ->
-        //         // drivetrain.getModule(1).getDriveMotor().get(),
-        //         // null);
-        //         builder.addDoubleProperty("Front Left Velocity",
-        //                 () -> drivetrain.getModule(1).getCurrentState().speedMetersPerSecond,
-        //                 null);
+                // Swerve 1
+                builder.addDoubleProperty("Front Left Angle",
+                        () -> drivetrain.getModule(0).getCurrentState().angle.getDegrees(),
+                        null);
+                builder.addDoubleProperty("Front Left Velocity",
+                        () -> drivetrain.getModule(0).getCurrentState().speedMetersPerSecond,
+                        null);
 
-        //         // Swerve 3
-        //         builder.addDoubleProperty("Front Right Angle",
-        //                 () -> drivetrain.getModule(2).getCurrentState().angle.getDegrees(),
-        //                 null);
-        //         // builder.addDoubleProperty("Front Right Velocity", () ->
-        //         // drivetrain.getModule(2).getDriveMotor().get(),
-        //         // null);
-        //         builder.addDoubleProperty("Front Left Velocity",
-        //                 () -> drivetrain.getModule(2).getCurrentState().speedMetersPerSecond,
-        //                 null);
+                // Swerve 2
+                builder.addDoubleProperty("Front Right Angle",
+                        () -> drivetrain.getModule(1).getCurrentState().angle.getDegrees(),
+                        null);
+                builder.addDoubleProperty("Front Right Velocity",
+                        () -> drivetrain.getModule(1).getCurrentState().speedMetersPerSecond,
+                        null);
 
-        //         // builder.addDoubleProperty("Back Left Angle",
-        //         // () ->
-        //         // drivetrain.getModule(3).getEncoder().getAbsolutePosition().getValueAsDouble(),
-        //         // null);
+                // Swerve 3
+                builder.addDoubleProperty("Back Left Angle",
+                        () -> drivetrain.getModule(2).getCurrentState().angle.getDegrees(),
+                        null);
+                builder.addDoubleProperty("Back Left Velocity",
+                        () -> drivetrain.getModule(2).getCurrentState().speedMetersPerSecond,
+                        null);
 
-        //         // Swerve 4
-        //         builder.addDoubleProperty("Back Left Angle",
-        //                 () -> drivetrain.getModule(3).getCurrentState().angle.getDegrees(),
-        //                 null);
-        //         builder.addDoubleProperty("Back Left Velocity", () -> drivetrain.getModule(3).getDriveMotor().get(),
-        //                 null);
-        //         builder.addDoubleProperty("Front Left Velocity",
-        //                 () -> drivetrain.getModule(3).getCurrentState().speedMetersPerSecond,
-        //                 null);
+                // Swerve 4
+                builder.addDoubleProperty("Back Right Angle",
+                        () -> drivetrain.getModule(3).getCurrentState().angle.getDegrees(),
+                        null);
+                builder.addDoubleProperty("Back Right Velocity",
+                        () -> drivetrain.getModule(3).getCurrentState().speedMetersPerSecond,
+                        null);
 
-        //         // Rotation
-        //         builder.addDoubleProperty("Robot Angle", () -> drivetrain.getRotation3d().toRotation2d().getDegrees(),
-        //                 null);
+                // Rotation
+                builder.addDoubleProperty("Robot Angle", () -> drivetrain.getRotation3d().toRotation2d().getDegrees(),
+                        null);
 
-        //         // builder.addDoubleProperty("Robot Angle", () ->
-        //         // drivetrain.getRotation3d().getMeasureAngle().magnitude(),
-        //         // null);
-        //         // builder.addDoubleProperty("Robot Angle", () ->
-        //         // drivetrain.getRotation3d().getAngle() * (180/Math.PI),
-        //         // null);
-
-        //     }
-        // });
+            }
+        });
 
         // Auto Chooser For Shuffleboard
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
+        
 
         // DS Ports
         logitech = new Joystick(KLogitechPort); // Logitech Dual Action
@@ -312,9 +305,10 @@ public class RobotContainer {
                         .withVelocityY(-getLogiLeftXAxis() * KMaxSpeed * subsystemUtil.getSwerveMaxSpeed())
                         .withRotationalRate(
                                 -getLogiRightXAxis() * KMaxAngularRate * subsystemUtil.getSwerveMaxSpeed())));
-        arm.setDefaultCommand(armStop);
-        lift.setDefaultCommand(liftStop);
-        coralIntake.setDefaultCommand(stopCoralIntake); // could be an issue
+        arm.setDefaultCommand(armStow);
+        lift.setDefaultCommand(liftStow);
+        // coralIntake.setDefaultCommand(armStow);
+        coralIntake.setDefaultCommand(coralDefault); // could be an issue
         // Logitech Controller:
 
         // Reset the field-centric heading on y button press
@@ -327,15 +321,15 @@ public class RobotContainer {
         logitechBtnLT.whileTrue(baseSlowMode);
 
         // When either button is released, it sets it equal to normal mode
-        logitechBtnLB.onFalse(baseNormalMode);
-        logitechBtnLT.onFalse(baseNormalMode);
+        logitechBtnLB.and(logitechBtnLT.whileFalse(baseNormalMode));
 
         // Comp Stream Deck:
 
         // Lift and Arm Setpoints
         compStreamDeck2.whileTrue(liftandArmIntake);
-        compStreamDeck1.whileTrue(liftStow);
+        compStreamDeck1.whileTrue(liftandArmTier3);
         compStreamDeck6.whileTrue(liftandArmTier2);
+        compStreamDeck7.whileTrue(liftandArmTier4);
         compStreamDeck11.whileTrue(liftandArmTier1);
 
         // Coral Intake
@@ -355,9 +349,9 @@ public class RobotContainer {
 
         // Base Sysid
         testStreamDeck1.whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        testStreamDeck2.whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        testStreamDeck2.whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
         testStreamDeck3.whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        testStreamDeck4.whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        testStreamDeck4.whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
 
         // logger
         testStreamDeck5.onTrue(endTelemetry);

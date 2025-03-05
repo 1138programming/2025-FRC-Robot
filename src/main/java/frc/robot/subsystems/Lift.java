@@ -63,6 +63,8 @@ public class Lift extends SubsystemBase {
 
     private boolean manualControl = false;
 
+    private double liftOffset;
+
     private final SysIdRoutine m_sysIdRoutineLift = new SysIdRoutine(
             new SysIdRoutine.Config(
                     null, // Use default ramp rate (1 V/s)
@@ -88,6 +90,8 @@ public class Lift extends SubsystemBase {
         canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         canCoderConfig.MagnetSensor.MagnetOffset = 0;
 
+        liftOffset = 1.5;
+
         liftCANCoder.getConfigurator().apply(canCoderConfig);
 
         // Lift Motor Config
@@ -95,7 +99,7 @@ public class Lift extends SubsystemBase {
 
         liftMotorConfig.Feedback.FeedbackRemoteSensorID = liftCANCoder.getDeviceID();
         liftMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        liftMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
+        liftMotorConfig.Feedback.SensorToMechanismRatio = 1;
         liftMotorConfig.Feedback.RotorToSensorRatio = 46.67;
         liftMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
@@ -137,15 +141,12 @@ public class Lift extends SubsystemBase {
         m_goal = new TrapezoidProfile.State(position, 0); // new goal position
         m_setpoint = m_profile.calculate(0.020, m_setpoint, m_goal);
 
-      
-
         positionVoltageController.Position = m_setpoint.position;
         positionVoltageController.Velocity = m_setpoint.velocity;
-        if(!manualControl) {
+        if (!manualControl) {
             liftMotor.setControl(positionVoltageController);
         }
         // Checks for manual Control
-       
 
         // SmartDashboard.putNumber("Lift Control speed", m_request.Velocity);
         // SmartDashboard.putNumber("Lift Control pos", m_request.Position);
@@ -167,6 +168,9 @@ public class Lift extends SubsystemBase {
         return m_sysIdRoutineLift.dynamic(direction);
     }
 
+    public double getSpeedLift () {
+        return liftMotor.get();
+    }
     // Limit Switches
     @Override
     public void periodic() {

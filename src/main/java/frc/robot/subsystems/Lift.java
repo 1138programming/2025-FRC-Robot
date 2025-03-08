@@ -63,6 +63,8 @@ public class Lift extends SubsystemBase {
 
     private boolean manualControl = false;
 
+    private double offset;
+
     private double liftOffset;
 
     private final SysIdRoutine m_sysIdRoutineLift = new SysIdRoutine(
@@ -122,6 +124,7 @@ public class Lift extends SubsystemBase {
         m_goal = new TrapezoidProfile.State(0, 0);
 
         m_setpoint = new TrapezoidProfile.State();
+        offset = 0;
     }
 
     public void setLiftElevatorVoltage(Voltage volts) {
@@ -136,20 +139,31 @@ public class Lift extends SubsystemBase {
         liftMotor.set(0);
     }
 
+    public void getLiftOffset() {
+        if (bottomlimitSwitch.get()) { 
+            offset = (0 - liftCANCoder.getAbsolutePosition().getValueAsDouble());
+        }
+        if (toplimitSwitch.get()) {
+            offset = (6.7 - liftCANCoder.getAbsolutePosition().getValueAsDouble());
+        }
+    }
+
     public void MoveLiftToSetPositionCTRE(double position) {
 
-        m_goal = new TrapezoidProfile.State(position, 0); // new goal position
+        // m_goal = new TrapezoidProfile.State(position + offset, 0); // new goal position
+        m_goal = new TrapezoidProfile.State(position + offset, 0); // new goal position
         m_setpoint = m_profile.calculate(0.020, m_setpoint, m_goal);
 
         positionVoltageController.Position = m_setpoint.position;
         positionVoltageController.Velocity = m_setpoint.velocity;
         if (!manualControl) {
-            liftMotor.setControl(positionVoltageController);
+            if (!(positionVoltageController.Velocity < 0 && bottomlimitSwitch.get()) || !(positionVoltageController.Velocity > 0 && toplimitSwitch.get())) {
+                liftMotor.setControl(positionVoltageController);
+            }
+            else {
+                liftMotor.stopMotor();
+            }
         }
-        // Checks for manual Control
-
-        // SmartDashboard.putNumber("Lift Control speed", m_request.Velocity);
-        // SmartDashboard.putNumber("Lift Control pos", m_request.Position);
     }
 
     public double getLiftCANCoder() {
@@ -176,8 +190,9 @@ public class Lift extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("Lift Top", toplimitSwitch.get());
         SmartDashboard.putBoolean("Lift Bottom", bottomlimitSwitch.get());
+        // SmartDashboard.putNumber("Lift encoder", liftCANCoder.getPosition().getValueAsDouble() + liftOffset);
         SmartDashboard.putNumber("Lift encoder", liftCANCoder.getPosition().getValueAsDouble());
         SmartDashboard.putBoolean("Lift Manual Control", manualControl);
-
+        // getLiftOffset();
     }
 }

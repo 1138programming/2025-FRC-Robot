@@ -37,6 +37,7 @@ public final class Constants {
                 public static final int KLiftCANCoderID = 5;
 
                 // PWM
+                public static final int KHangLock = 0;
 
                 // DIO
                 public static final int KLiftBottomLImitSwitch = 0;
@@ -44,7 +45,6 @@ public final class Constants {
                 public static final int KTiltThroughEncoderId = 2;
                 public static final int KCoralIntakeMotorLimitSwitch = 3;
                 public static final int KArmLimitSwitch = 4;
-                public static final int KHangLock = 5;
                 public static final int KHangThroughEncoderId = 6;
         }
 
@@ -55,15 +55,14 @@ public final class Constants {
                 // the
                 // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
                 private static final Slot0Configs steerGains = new Slot0Configs()
-                                .withKP(43.0325).withKI(0).withKD(2.189925)
-                                .withKS(0.5124675).withKV(1.89445).withKA(0.06765)
+                                .withKP(80).withKI(0).withKD(0.4)
+                                .withKS(0.1).withKV(2.33).withKA(0)
                                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
                 // When using closed-loop control, the drive motor uses the control
                 // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
                 private static final Slot0Configs driveGains = new Slot0Configs()
                                 .withKP(0.1499125).withKI(0).withKD(0)
-                                .withKS(0.185485).withKV(0.124475).withKA(0.01575)
-                                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
+                                .withKS(0.185485).withKV(0.124475).withKA(0.01575).withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
                 // The closed-loop output type to use for the steer motors;
                 // This affects the PID/FF gains for the steer motors
@@ -262,9 +261,9 @@ public final class Constants {
                                                                                                              // deadband
                                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-                public static final double KBaseTurboMode = 0.8;
-                public static final double KBaseNormalMode = 0.35;
-                public static final double KBaseSlowMode = 0.1;
+                public static final double KBaseTurboMode = 1;
+                public static final double KBaseNormalMode = 0.5;
+                public static final double KBaseSlowMode = 0.25;
 
         }
 
@@ -384,17 +383,19 @@ public final class Constants {
 
                 public static class LiftPositionConstants {
                         // Takes about 6 rotations to fully extend
-                        public static final double KLiftPositionStow = 0.3; // assuming store means not used 
+                        public static final double KLiftPositionStow = -0.1; // assuming store means not used
                         // public static final double KLiftPositionStow = 0.3; // assuming store means not used
 
+
+                        //stow point is 0.26
                         public static final int KLiftControlP = 0;
                         public static final int KLiftControlI = 0;
                         public static final int KLiftControlD = 0;
                         
                         public static final int KLiftMaxVoltage = 12; // in rps
-                        public static final double KLiftPositionReefL4 = 5.7;
-                        public static final double KLiftPositionReefL3 = 4 + 0.1;
-                        public static final double KLiftPositionReefL2 = 1.75 + 0.1;
+                        public static final double KLiftPositionReefL4 = 5.83;
+                        public static final double KLiftPositionReefL3 = 3.9;
+                        public static final double KLiftPositionReefL2 = 1.6;
                         public static final double KLiftPositionReefL1 = 0;// could be between range 0-10
 
                         // public static final int KLiftPositionIntakeGround = 340;

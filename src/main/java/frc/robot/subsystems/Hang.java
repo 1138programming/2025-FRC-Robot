@@ -11,6 +11,7 @@ import static frc.robot.Constants.HangConstants.*;
 
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -19,6 +20,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -34,28 +36,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 public class Hang extends SubsystemBase {
   /** Creates a new Hang. */
   private TalonFX tiltMotor;
-  private VoltageOut voltageController;
+  private DutyCycleOut dutyCycleController;
 
   private Servo lock;
 
- DutyCycleEncoder HangEncoder;
-  private final SysIdRoutine m_sysIdRoutineHang = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    null, // Use default ramp rate (1 V/s)
-                    Volts.of(5), // Use dynamic voltage of 7 V
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdLift_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    volts -> setHangVoltage(volts),
-                    null,
-                    this));
+  private DutyCycleEncoder HangEncoder;
 
 
   public Hang() {
     tiltMotor = new TalonFX(KHangMotorId);
     HangEncoder = new DutyCycleEncoder(KHangThroughEncoderId, KHangThroughEncoderFullRotationValue, KHangThroughEncoderZeroPosition);
-    voltageController = new VoltageOut(0).withEnableFOC(false);
+    dutyCycleController = new DutyCycleOut(0).withEnableFOC(true);
 
     lock = new Servo(KHangLock);
 
@@ -71,19 +62,19 @@ public class Hang extends SubsystemBase {
   public void setlock(double pos) {
     lock.set(pos);
   }
-  public void setHangVoltage(Voltage Volt) {
-    tiltMotor.setControl(voltageController.withOutput(Volt));
-  }
-   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineHang.quasistatic(direction);
-    }
 
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineHang.dynamic(direction);
-    }
+  public void setHangSpeed(double output) {
+    tiltMotor.setControl(dutyCycleController.withOutput(output));
+  }
+
+  public void moveHang(double hangSpeed, double pos) {
+    tiltMotor.setControl(dutyCycleController.withOutput(hangSpeed));
+    lock.set(pos);
+  }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("servo", lock.get());
     // This method will be called once per scheduler run
   }
 }

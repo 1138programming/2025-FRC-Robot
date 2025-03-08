@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.Util;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -29,6 +30,8 @@ import frc.robot.commands.Base.BaseSpeed;
 import frc.robot.commands.Base.DriveWithJoysticks;
 import frc.robot.commands.Coral.CoralDefault;
 import frc.robot.commands.Coral.SpinCoralIntake;
+import frc.robot.commands.Hang.MoveHang;
+import frc.robot.commands.Hang.MoveHangServo;
 import frc.robot.commands.Lift.MoveLift;
 import frc.robot.commands.Lift.MoveLiftToPos;
 import frc.robot.commands.Lift.SetLiftManualMode;
@@ -37,6 +40,7 @@ import frc.robot.commands.Telemetry.StartTelemetry;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
+import frc.robot.subsystems.Hang;
 import frc.robot.subsystems.Lift;
 import frc.robot.util.Telemetry;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -58,6 +62,7 @@ public class RobotContainer {
     public final Lift lift;
     public final CoralIntake coralIntake;
     public final SubsystemUtil subsystemUtil;
+    public final Hang hang;
 
     // Commands
     public final DriveWithJoysticks driveWithJoysticks;
@@ -85,6 +90,13 @@ public class RobotContainer {
     public final SpinCoralIntake spinCoralIntakeForward;
     public final SpinCoralIntake spinCoralIntakeBackward;
 
+    public final MoveHang moveHangUp;
+    public final MoveHang moveHangDown;
+    public final MoveHang moveHangStop;
+
+    public final MoveHangServo lockRachet;
+    public final MoveHangServo unlockRachet;
+
     // Command Groups
     public final LiftandArmTier4 liftandArmTier4;
     public final LiftandArmTier3 liftandArmTier3;
@@ -93,6 +105,7 @@ public class RobotContainer {
     public final LiftandArmIntake liftandArmIntake;
     private final SendableChooser<Command> autoChooser;
 
+    
     /* Setting up bindings for necessary control of the swerve drive platform */
     // private final SwerveRequest.SwerveDriveBrake brake = new
     // SwerveRequest.SwerveDriveBrake();
@@ -111,7 +124,7 @@ public class RobotContainer {
     public JoystickButton compStreamDeck1, compStreamDeck2, compStreamDeck3, compStreamDeck4, compStreamDeck5,
             compStreamDeck6, compStreamDeck7, compStreamDeck8, compStreamDeck9, compStreamDeck10, compStreamDeck11,
             compStreamDeck12, compStreamDeck13,
-            compStreamDeck14, compStreamDeck15;
+            compStreamDeck14, compStreamDeck15, compStreamDeck16, compStreamDeck17, compStreamDeck18, compStreamDeck19;
 
     // Top Left SD = 1, numbered from left to right
     public JoystickButton testStreamDeck1, testStreamDeck2, testStreamDeck3, testStreamDeck4, testStreamDeck5,
@@ -134,6 +147,7 @@ public class RobotContainer {
         lift = new Lift();
         coralIntake = new CoralIntake();
         subsystemUtil = new SubsystemUtil(arm);
+        hang = new Hang();
 
         // Commands
         driveWithJoysticks = new DriveWithJoysticks(drivetrain);
@@ -164,6 +178,13 @@ public class RobotContainer {
         spinCoralIntakeForward = new SpinCoralIntake(coralIntake, KCoralIntakeSpeed);
         spinCoralIntakeBackward = new SpinCoralIntake(coralIntake, -KCoralIntakeSpeed);
 
+        moveHangUp = new MoveHang(hang, 1);
+        moveHangDown = new MoveHang(hang, -1);
+        moveHangStop = new MoveHang(hang, 0);
+
+        lockRachet = new MoveHangServo(hang, 0);
+        unlockRachet = new MoveHangServo(hang, 1);
+
         // Command Groups
         liftandArmTier4 = new LiftandArmTier4(arm, lift);
         liftandArmTier3 = new LiftandArmTier3(arm, lift);
@@ -171,12 +192,6 @@ public class RobotContainer {
         liftandArmTier1 = new LiftandArmTier1(arm, lift);
         liftandArmIntake = new LiftandArmIntake(arm, lift);
 
-        //Named Commands (for Pathplanner)
-        NamedCommands.registerCommand("liftandArmTier4", liftandArmTier4);
-        NamedCommands.registerCommand("liftandArmTier3", liftandArmTier3);
-        NamedCommands.registerCommand("liftandArmTier2", liftandArmTier2);
-        NamedCommands.registerCommand("liftandArmTier1", liftandArmTier1);
-        NamedCommands.registerCommand("spinCoralIntakeBackward", spinCoralIntakeBackward);
 
         SmartDashboard.putData("Swerve Drive", new Sendable() {
             @Override
@@ -222,6 +237,9 @@ public class RobotContainer {
             }
         });
 
+        NamedCommands.registerCommand("LiftT4", liftandArmTier4);
+        NamedCommands.registerCommand("CoralOut", spinCoralIntakeBackward);
+
         // Auto Chooser For Shuffleboard
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -261,6 +279,10 @@ public class RobotContainer {
         compStreamDeck13 = new JoystickButton(compStreamDeck, 13);
         compStreamDeck14 = new JoystickButton(compStreamDeck, 14);
         compStreamDeck15 = new JoystickButton(compStreamDeck, 15);
+        compStreamDeck16 = new JoystickButton(compStreamDeck, 16);
+        compStreamDeck17 = new JoystickButton(compStreamDeck, 17);
+        compStreamDeck18 = new JoystickButton(compStreamDeck, 18);
+        compStreamDeck19 = new JoystickButton(compStreamDeck, 19);
 
         // Streamdeck Pages used for testing
         testStreamDeck1 = new JoystickButton(testStreamDeck, 1);
@@ -309,6 +331,8 @@ public class RobotContainer {
         lift.setDefaultCommand(liftStow);
         // coralIntake.setDefaultCommand(armStow);
         coralIntake.setDefaultCommand(coralDefault); // could be an issue
+        hang.setDefaultCommand(moveHangStop);
+
         // Logitech Controller:
 
         // Reset the field-centric heading on y button press
@@ -321,7 +345,8 @@ public class RobotContainer {
         logitechBtnLT.whileTrue(baseSlowMode);
 
         // When either button is released, it sets it equal to normal mode
-        logitechBtnLB.and(logitechBtnLT.whileFalse(baseNormalMode));
+        logitechBtnLB.whileFalse(baseNormalMode);
+        logitechBtnLT.onFalse(baseNormalMode);
 
         // Comp Stream Deck:
 
@@ -344,6 +369,11 @@ public class RobotContainer {
         compStreamDeck8.whileTrue(tiltArmManuallyDown);
         compStreamDeck4.whileTrue(moveLiftUp);
         compStreamDeck9.whileTrue(moveLiftDown);
+
+        compStreamDeck15.whileTrue(lockRachet);
+        compStreamDeck16.whileTrue(unlockRachet);
+        compStreamDeck17.whileTrue(moveHangUp);
+        compStreamDeck18.whileTrue(moveHangDown);
 
         // Test Stream Deck:
 

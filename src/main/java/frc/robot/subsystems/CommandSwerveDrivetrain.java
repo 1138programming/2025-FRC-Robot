@@ -217,8 +217,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     new PPHolonomicDriveController(
                         // PID constants for translation
                         new PIDConstants(30.24925, 0, 0.896635),
+                        // // PID constants for rotation
+                        // new PIDConstants(1.5, 0, 0.001)
+                        // new PIDConstants(10, 0, 0),
                         // PID constants for rotation
-                        new PIDConstants(0.8, 0, 0)
+                        new PIDConstants(0, 0, 0)
                     ),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case
@@ -228,6 +231,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             } catch (Exception ex) {
                 DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
             }
+            
         }
     
         /**

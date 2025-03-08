@@ -2,31 +2,31 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Base;
+package frc.robot.commands.Hang;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.SubsystemUtil;
+import frc.robot.subsystems.Hang;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class BaseSpeed extends Command {
-  private SubsystemUtil subsystemUtil;
-  private double speed;
-  /** Creates a new BaseTurbo. */
-  public BaseSpeed(SubsystemUtil subsystemUtil, double speed) {
-    this.subsystemUtil = subsystemUtil;
-    this.speed = speed;
+public class MoveHangServo extends Command {
+  private Hang hang;
+  private double pos;
+  /** Creates a new MoveHang. */
+  public MoveHangServo(Hang hang, double pos) {
+    this.hang = hang;
+    this.pos = pos;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    subsystemUtil.setSwerveMaxSpeed(speed);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    hang.setlock(pos);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -35,6 +35,6 @@ public class BaseSpeed extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

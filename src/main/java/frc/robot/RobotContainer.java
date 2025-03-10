@@ -42,6 +42,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Hang;
 import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Limelight;
 import frc.robot.util.Telemetry;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -57,8 +58,9 @@ import static frc.robot.Constants.CoralIntakeConstants.*;
 public class RobotContainer {
 
     // Subsystems
-    public final CommandSwerveDrivetrain drivetrain;
+    public static final CommandSwerveDrivetrain drivetrain = createDrivetrain();
     public final Arm arm;
+    public final Limelight limelight;
     public final Lift lift;
     public final CoralIntake coralIntake;
     public final SubsystemUtil subsystemUtil;
@@ -142,12 +144,12 @@ public class RobotContainer {
     public RobotContainer() {
 
         // Subsystems
-        drivetrain = createDrivetrain();
         arm = new Arm();
         lift = new Lift();
         coralIntake = new CoralIntake();
         subsystemUtil = new SubsystemUtil(arm);
         hang = new Hang();
+        limelight = new Limelight();
 
         // Commands
         driveWithJoysticks = new DriveWithJoysticks(drivetrain);
@@ -332,6 +334,7 @@ public class RobotContainer {
         // coralIntake.setDefaultCommand(armStow);
         coralIntake.setDefaultCommand(coralDefault); // could be an issue
         hang.setDefaultCommand(moveHangStop);
+        limelight.setDefaultCommand(limelight.updateOdomCommand(drivetrain));
 
         // Logitech Controller:
 

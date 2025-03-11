@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.85,
+        "x": 5.9475,
         "y": 4.18
       },
       "prevControl": {
-        "x": 5.59734477780483,
+        "x": 5.69484477780483,
         "y": 4.185183085633912
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Mid end 1"
     }
   ],
   "rotationTargets": [],

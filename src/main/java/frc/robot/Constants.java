@@ -383,7 +383,7 @@ public final class Constants {
 
                 public static class LiftPositionConstants {
                         // Takes about 6 rotations to fully extend
-                        public static final double KLiftPositionStow = -0.1; // assuming store means not used
+                        public static final double KLiftPositionStow = -0.2; // assuming store means not used
                         // public static final double KLiftPositionStow = 0.3; // assuming store means not used
 
 

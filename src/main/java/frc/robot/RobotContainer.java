@@ -332,6 +332,7 @@ public class RobotContainer {
         // coralIntake.setDefaultCommand(armStow);
         coralIntake.setDefaultCommand(coralDefault); // could be an issue
         hang.setDefaultCommand(moveHangStop);
+    
 
         // Logitech Controller:
 

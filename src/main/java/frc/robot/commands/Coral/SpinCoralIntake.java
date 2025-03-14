@@ -5,13 +5,11 @@
 package frc.robot.commands.Coral;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.CoralIntake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SpinCoralIntake extends Command {
   private final CoralIntake coralIntake;
-  private Arm arm;
   private double speed;
   /** Creates a new SpinCoralIntake. */
   public SpinCoralIntake(CoralIntake coralIntake, double speed) {

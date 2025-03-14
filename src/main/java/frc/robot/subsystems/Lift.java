@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.LiftConstants.*;
-import static frc.robot.Constants.LiftConstants.LiftPositionConstants.KLiftControlP;
 import static frc.robot.Constants.DeviceConstants.*;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -26,7 +25,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-import com.fasterxml.jackson.databind.ser.impl.FailingSerializer;
 
 /*In entire lift:
 2 limit switches, 

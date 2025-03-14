@@ -4,10 +4,10 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.Util;
+import com.ctre.phoenix6.Utils;
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -27,7 +27,6 @@ import frc.robot.commands.Arm.SetArmManualMode;
 import frc.robot.commands.Arm.TiltArmManually;
 import frc.robot.commands.Arm.TiltArmToSetPosition;
 import frc.robot.commands.Base.BaseSpeed;
-import frc.robot.commands.Base.DriveWithJoysticks;
 import frc.robot.commands.Coral.CoralDefault;
 import frc.robot.commands.Coral.SpinCoralIntake;
 import frc.robot.commands.Hang.MoveHang;
@@ -38,36 +37,32 @@ import frc.robot.commands.Lift.SetLiftManualMode;
 import frc.robot.commands.Telemetry.EndTelemetry;
 import frc.robot.commands.Telemetry.StartTelemetry;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Hang;
 import frc.robot.subsystems.Lift;
-import frc.robot.subsystems.Limelight;
 import frc.robot.util.Telemetry;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import static frc.robot.Constants.TunerConstants.*;
+
 import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Constants.ArmConstants.ArmPositionConstants.*;
 import static frc.robot.Constants.LiftConstants.*;
 import static frc.robot.Constants.LiftConstants.LiftPositionConstants.*;
 import static frc.robot.Constants.OperatorConstants.*;
-import static frc.robot.generated.TunerSwerve.*;
 import static frc.robot.Constants.CoralIntakeConstants.*;
 
 public class RobotContainer {
 
     // Subsystems
-    public static final CommandSwerveDrivetrain drivetrain = createDrivetrain();
     public final Arm arm;
-    public final Limelight limelight;
     public final Lift lift;
     public final CoralIntake coralIntake;
     public final SubsystemUtil subsystemUtil;
     public final Hang hang;
 
     // Commands
-    public final DriveWithJoysticks driveWithJoysticks;
     public final EndTelemetry endTelemetry;
     public final StartTelemetry startTelemetry;
     public final BaseSpeed baseTurboMode;
@@ -107,7 +102,6 @@ public class RobotContainer {
     public final LiftandArmIntake liftandArmIntake;
     private final SendableChooser<Command> autoChooser;
 
-    
     /* Setting up bindings for necessary control of the swerve drive platform */
     // private final SwerveRequest.SwerveDriveBrake brake = new
     // SwerveRequest.SwerveDriveBrake();
@@ -149,11 +143,8 @@ public class RobotContainer {
         coralIntake = new CoralIntake();
         subsystemUtil = new SubsystemUtil(arm);
         hang = new Hang();
-        limelight = new Limelight();
 
         // Commands
-        driveWithJoysticks = new DriveWithJoysticks(drivetrain);
-
         baseTurboMode = new BaseSpeed(subsystemUtil, KBaseTurboMode);
         baseNormalMode = new BaseSpeed(subsystemUtil, KBaseNormalMode);
         baseSlowMode = new BaseSpeed(subsystemUtil, KBaseSlowMode);
@@ -194,7 +185,6 @@ public class RobotContainer {
         liftandArmTier1 = new LiftandArmTier1(arm, lift);
         liftandArmIntake = new LiftandArmIntake(arm, lift);
 
-
         SmartDashboard.putData("Swerve Drive", new Sendable() {
             @Override
             public void initSendable(SendableBuilder builder) {
@@ -202,38 +192,38 @@ public class RobotContainer {
 
                 // Swerve 1
                 builder.addDoubleProperty("Front Left Angle",
-                        () -> drivetrain.getModule(0).getCurrentState().angle.getDegrees(),
+                        () -> Swerve.get().getModule(0).getCurrentState().angle.getDegrees(),
                         null);
                 builder.addDoubleProperty("Front Left Velocity",
-                        () -> drivetrain.getModule(0).getCurrentState().speedMetersPerSecond,
+                        () -> Swerve.get().getModule(0).getCurrentState().speedMetersPerSecond,
                         null);
 
                 // Swerve 2
                 builder.addDoubleProperty("Front Right Angle",
-                        () -> drivetrain.getModule(1).getCurrentState().angle.getDegrees(),
+                        () -> Swerve.get().getModule(1).getCurrentState().angle.getDegrees(),
                         null);
                 builder.addDoubleProperty("Front Right Velocity",
-                        () -> drivetrain.getModule(1).getCurrentState().speedMetersPerSecond,
+                        () -> Swerve.get().getModule(1).getCurrentState().speedMetersPerSecond,
                         null);
 
                 // Swerve 3
                 builder.addDoubleProperty("Back Left Angle",
-                        () -> drivetrain.getModule(2).getCurrentState().angle.getDegrees(),
+                        () -> Swerve.get().getModule(2).getCurrentState().angle.getDegrees(),
                         null);
                 builder.addDoubleProperty("Back Left Velocity",
-                        () -> drivetrain.getModule(2).getCurrentState().speedMetersPerSecond,
+                        () -> Swerve.get().getModule(2).getCurrentState().speedMetersPerSecond,
                         null);
 
                 // Swerve 4
                 builder.addDoubleProperty("Back Right Angle",
-                        () -> drivetrain.getModule(3).getCurrentState().angle.getDegrees(),
+                        () -> Swerve.get().getModule(3).getCurrentState().angle.getDegrees(),
                         null);
                 builder.addDoubleProperty("Back Right Velocity",
-                        () -> drivetrain.getModule(3).getCurrentState().speedMetersPerSecond,
+                        () -> Swerve.get().getModule(3).getCurrentState().speedMetersPerSecond,
                         null);
 
                 // Rotation
-                builder.addDoubleProperty("Robot Angle", () -> drivetrain.getRotation3d().toRotation2d().getDegrees(),
+                builder.addDoubleProperty("Robot Angle", () -> Swerve.get().getRotation3d().toRotation2d().getDegrees(),
                         null);
 
             }
@@ -245,7 +235,6 @@ public class RobotContainer {
         // Auto Chooser For Shuffleboard
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
-        
 
         // DS Ports
         logitech = new Joystick(KLogitechPort); // Logitech Dual Action
@@ -324,8 +313,8 @@ public class RobotContainer {
     private void configureBindings() {
 
         // Default Commands
-        drivetrain.setDefaultCommand(drivetrain.applyRequest(
-                () -> Kdrive.withVelocityX(-getLogiLeftYAxis() * KMaxSpeed * subsystemUtil.getSwerveMaxSpeed())
+        Swerve.get().setDefaultCommand(Swerve.get().applyRequest(
+                () -> Swerve.frDriveReq.withVelocityX(-getLogiLeftYAxis() * KMaxSpeed * subsystemUtil.getSwerveMaxSpeed())
                         .withVelocityY(-getLogiLeftXAxis() * KMaxSpeed * subsystemUtil.getSwerveMaxSpeed())
                         .withRotationalRate(
                                 -getLogiRightXAxis() * KMaxAngularRate * subsystemUtil.getSwerveMaxSpeed())));
@@ -334,12 +323,11 @@ public class RobotContainer {
         // coralIntake.setDefaultCommand(armStow);
         coralIntake.setDefaultCommand(coralDefault); // could be an issue
         hang.setDefaultCommand(moveHangStop);
-        limelight.setDefaultCommand(limelight.updateOdomCommand(drivetrain));
 
         // Logitech Controller:
 
         // Reset the field-centric heading on y button press
-        logitechBtnY.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        logitechBtnY.onTrue(Swerve.get().runOnce(() -> Swerve.get().seedFieldCentric()));
 
         logitechBtnRB.whileTrue(spinCoralIntakeForward);
         logitechBtnRT.whileTrue(spinCoralIntakeBackward);
@@ -381,10 +369,10 @@ public class RobotContainer {
         // Test Stream Deck:
 
         // Base Sysid
-        testStreamDeck1.whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        testStreamDeck2.whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        testStreamDeck3.whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        testStreamDeck4.whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        testStreamDeck1.whileTrue(Swerve.get().sysIdQuasistatic(Direction.kForward));
+        testStreamDeck2.whileTrue(Swerve.get().sysIdQuasistatic(Direction.kReverse));
+        testStreamDeck3.whileTrue(Swerve.get().sysIdDynamic(Direction.kForward));
+        testStreamDeck4.whileTrue(Swerve.get().sysIdDynamic(Direction.kReverse));
 
         // logger
         testStreamDeck5.onTrue(endTelemetry);
@@ -404,13 +392,31 @@ public class RobotContainer {
         testStreamDeck14.whileTrue(tiltArmManuallyDown);
 
         // Starts Telemetry
-        drivetrain.registerTelemetry(logger::telemeterize);
+        Swerve.get().registerTelemetry(logger::telemeterize);
 
     }
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
         // autoChooser.getSelected();
+    }
+
+    public void updateVision(String limelightName) {
+        double heading = Swerve.get().getState().Pose.getRotation().getDegrees();
+
+        LimelightHelpers.SetRobotOrientation(limelightName, heading, 0.0, 0.0, 0.0, 0.0, 0.0);
+        var measurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+        if (measurement != null) {
+            if (measurement.tagCount > 0 && measurement.rawFiducials[0].ambiguity < 0.5
+                    && measurement.rawFiducials[0].distToCamera < 5) {
+                // Experimental
+                double trustMetric = (Math.pow(measurement.rawFiducials[0].distToCamera, 2)
+                        * measurement.rawFiducials[0].ambiguity / 35);
+                Swerve.get().setVisionMeasurementStdDevs(VecBuilder.fill(trustMetric, trustMetric, trustMetric));
+                Swerve.get().addVisionMeasurement(measurement.pose,
+                        Utils.fpgaToCurrentTime(measurement.timestampSeconds));
+            }
+        }
     }
 
     public double getLogiRightYAxis() {

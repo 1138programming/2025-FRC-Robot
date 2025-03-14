@@ -107,7 +107,6 @@ public class RobotContainer {
     public final LiftandArmIntake liftandArmIntake;
     private final SendableChooser<Command> autoChooser;
 
-    
     /* Setting up bindings for necessary control of the swerve drive platform */
     // private final SwerveRequest.SwerveDriveBrake brake = new
     // SwerveRequest.SwerveDriveBrake();
@@ -194,7 +193,6 @@ public class RobotContainer {
         liftandArmTier1 = new LiftandArmTier1(arm, lift);
         liftandArmIntake = new LiftandArmIntake(arm, lift);
 
-
         SmartDashboard.putData("Swerve Drive", new Sendable() {
             @Override
             public void initSendable(SendableBuilder builder) {
@@ -245,7 +243,6 @@ public class RobotContainer {
         // Auto Chooser For Shuffleboard
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
-        
 
         // DS Ports
         logitech = new Joystick(KLogitechPort); // Logitech Dual Action
@@ -318,6 +315,7 @@ public class RobotContainer {
         autonTestStreamDeck13 = new JoystickButton(testStreamDeck, 13);
         autonTestStreamDeck14 = new JoystickButton(testStreamDeck, 14);
         autonTestStreamDeck15 = new JoystickButton(testStreamDeck, 15);
+        // limelight.updateYaw(drivetrain);
         configureBindings();
     }
 

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.*;
 import com.ctre.phoenix6.swerve.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.*;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.*;
@@ -253,7 +254,7 @@ public final class Constants {
                                 .withDeadband(KMaxSpeed * 0.1).withRotationalDeadband(KMaxAngularRate * 0.1) // Add a
                                                                                                              // 10%
                                                                                                              // deadband
-                                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+                                .withDriveRequestType(DriveRequestType.OpenLoopVoltage).withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
 
                 public static final SwerveRequest.FieldCentricFacingAngle KdriveNoStear = new SwerveRequest.FieldCentricFacingAngle()
                                 .withDeadband(KMaxSpeed * 0.1).withRotationalDeadband(KMaxAngularRate * 0.1) // Add a

@@ -34,14 +34,14 @@ public final class Constants {
 
                 // DIO
                 public static final int KLiftBottomLImitSwitch = 0;
-                public static final int KLiftTopLimitSwitch = 1;
-                public static final int KTiltThroughEncoderId = 2;
+                public static final int KLiftTopLimitSwitch = 2;
+                public static final int KTiltThroughEncoderId = 1;
                 public static final int KCoralIntakeMotorLimitSwitch = 3;
                 public static final int KArmLimitSwitch = 4;
                 public static final int KHangThroughEncoderId = 6;
         }
 
-        public static class TunerConstants {
+        public static class SwerveConstants {
 
                 // public static final double KMaxSpeed = kSpeedAt12Volts.in(MetersPerSecond);
                 // // kSpeedAt12Volts desired

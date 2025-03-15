@@ -44,7 +44,7 @@ import frc.robot.subsystems.Lift;
 import frc.robot.util.Telemetry;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import static frc.robot.Constants.TunerConstants.*;
+import static frc.robot.Constants.SwerveConstants.*;
 
 import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Constants.ArmConstants.ArmPositionConstants.*;
@@ -404,7 +404,7 @@ public class RobotContainer {
     public void updateVision(String limelightName) {
         double heading = Swerve.get().getState().Pose.getRotation().getDegrees();
 
-        LimelightHelpers.SetRobotOrientation(limelightName, heading, 0.0, 0.0, 0.0, 0.0, 0.0);
+        // LimelightHelpers.SetRobotOrientation(limelightName, heading, 0.0, 0.0, 0.0, 0.0, 0.0);
         var measurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
         if (measurement != null) {
             if (measurement.tagCount > 0 && measurement.rawFiducials[0].ambiguity < 0.5
@@ -412,7 +412,8 @@ public class RobotContainer {
                 // Experimental
                 double trustMetric = (Math.pow(measurement.rawFiducials[0].distToCamera, 2)
                         * measurement.rawFiducials[0].ambiguity / 35);
-                Swerve.get().setVisionMeasurementStdDevs(VecBuilder.fill(trustMetric, trustMetric, trustMetric));
+                Swerve.get().setVisionMeasurementStdDevs(VecBuilder.fill(trustMetric, trustMetric, 999999999
+                ));
                 Swerve.get().addVisionMeasurement(measurement.pose,
                         Utils.fpgaToCurrentTime(measurement.timestampSeconds));
             }

@@ -50,7 +50,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         return m_CommandSwerveDrivetrain;
     }
 
-    private Limelight backLimelight = new Limelight("limelight-back");
+    // private Limelight backLimelight = new Limelight("limelight-back");
     private Limelight frontLimelight = new Limelight("limelight-front");
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -231,7 +231,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
                                     .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
                     new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(30.24925, 0, 0.896635),
+                            // new PIDConstants(30.24925, 0, 0.896635),
+                            new PIDConstants(12, 0, 0),
                             // // PID constants for rotation
                             // new PIDConstants(1.5, 0, 0.001)
                             // new PIDConstants(10, 0, 0),

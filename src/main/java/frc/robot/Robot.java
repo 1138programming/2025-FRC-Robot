@@ -20,15 +20,18 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
-    m_robotContainer.updateVision("limelight-back");
-    m_robotContainer.updateVision("limelight-front");
+    // m_robotContainer.updateVision("limelight-back");
   }
 
   @Override
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.updateVision("limelight-front");
+        // m_robotContainer.updateVision("limelight-back");
+
+  }
 
   @Override
   public void disabledExit() {}
@@ -43,7 +46,11 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    m_robotContainer.updateVision("limelight-front");
+        // m_robotContainer.updateVision("limelight-back");
+
+  }
 
   @Override
   public void autonomousExit() {}

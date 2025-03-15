@@ -231,6 +231,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("LiftT4", liftandArmTier4);
         NamedCommands.registerCommand("CoralOut", spinCoralIntakeBackward);
+        NamedCommands.registerCommand("CoralIn", spinCoralIntakeForward);
 
         // Auto Chooser For Shuffleboard
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -412,7 +413,7 @@ public class RobotContainer {
                 // Experimental
                 double trustMetric = (Math.pow(measurement.rawFiducials[0].distToCamera, 2)
                         * measurement.rawFiducials[0].ambiguity / 35);
-                Swerve.get().setVisionMeasurementStdDevs(VecBuilder.fill(trustMetric, trustMetric, 999999999
+                Swerve.get().setVisionMeasurementStdDevs(VecBuilder.fill(trustMetric, trustMetric, trustMetric
                 ));
                 Swerve.get().addVisionMeasurement(measurement.pose,
                         Utils.fpgaToCurrentTime(measurement.timestampSeconds));

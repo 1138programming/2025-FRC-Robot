@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -148,6 +149,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             startSimThread();
         }
         configureAutoBuilder();
+        BaseStatusSignal.setUpdateFrequencyForAll(250);
     }
 
     /**
@@ -232,12 +234,12 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
                     new PPHolonomicDriveController(
                             // PID constants for translation
                             // new PIDConstants(30.24925, 0, 0.896635),
-                            new PIDConstants(12, 0, 0),
+                            new PIDConstants(8, 0, 0),
                             // // PID constants for rotation
                             // new PIDConstants(1.5, 0, 0.001)
                             // new PIDConstants(10, 0, 0),
                             // PID constants for rotation
-                            new PIDConstants(0, 0, 0)),
+                            new PIDConstants(0.0, 0, 0)),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the
                     // case
@@ -285,12 +287,12 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     public static SwerveRequest.ApplyRobotSpeeds rrDriveReq = new SwerveRequest.ApplyRobotSpeeds()
-            .withDriveRequestType(com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.OpenLoopVoltage)
+            .withDriveRequestType(com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.Position);
 
     public static SwerveRequest.FieldCentric frDriveReq = new SwerveRequest.FieldCentric()
             .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.Position);
 
     public void Drive(ChassisSpeeds c) {
